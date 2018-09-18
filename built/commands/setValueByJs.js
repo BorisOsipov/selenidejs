@@ -14,12 +14,12 @@
 // limitations under the License.
 Object.defineProperty(exports, "__esModule", { value: true });
 class SetValueByJs {
-    async perform(element, ...args) {
+    constructor(driver, value) {
+        this.value = value;
+        this.driver = driver;
+    }
+    async perform(element) {
         const webelement = await element.getWebElement();
-        /* tslint:disable:no-string-literal */
-        const driver = element['driver'];
-        /* tslint:enable:no-string-literal */
-        const value = args[0];
         const script = `return (function(webelement, text) {
                     var maxlength = webelement.getAttribute('maxlength') == null
                         ? -1
@@ -30,7 +30,10 @@ class SetValueByJs {
                     return null;
                     })(arguments[0], arguments[1]);`;
         await webelement.clear();
-        await driver.executeScript(script, webelement, String(value));
+        await this.driver.executeScript(script, webelement, String(this.value));
+    }
+    toString() {
+        return 'setValueByJs';
     }
 }
 exports.SetValueByJs = SetValueByJs;

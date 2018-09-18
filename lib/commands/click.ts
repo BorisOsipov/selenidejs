@@ -20,4 +20,8 @@ export class Click implements Command<Element> {
         const webelement = await element.getWebElement();
         await webelement.click();
     }
+
+    toString() {
+        return 'click';
+    }
 }

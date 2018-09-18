@@ -18,6 +18,7 @@ import { Condition } from '../conditions/condition';
 import { ElementCondition } from '../conditions/elementCondition';
 import { Driver } from './driver';
 import { Element } from './element';
+import { HookExecutor } from './hooks/hookExecutor';
 import { ByFilteredWebElementsLocator } from './locators/byFilteredWebElementsLocator';
 import { ByIndexedWebElementLocator } from './locators/byIndexedWebElementLocator';
 import { Locator } from './locators/locator';
@@ -33,7 +34,7 @@ export class Collection {
     constructor(locator: Locator<Promise<WebElement[]>>, driver: Driver) {
         this.locator = locator;
         this.driver = driver;
-        this.wait = new Wait(this, driver);
+        this.wait = new Wait(this, this.driver.configuration, new HookExecutor<Collection>(driver, this));
     }
 
     async should(condition: CollectionCondition, timeout?: number): Promise<Collection> {

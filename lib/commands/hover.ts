@@ -12,15 +12,23 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import { Driver } from '..';
 import { Element } from '../baseEntities/element';
 import { Command } from './command';
 
 export class Hover implements Command<Element> {
-    async perform(element: Element, ...args: any[]): Promise<void> {
+    private readonly driver: Driver;
+
+    constructor(driver: Driver) {
+        this.driver = driver;
+    }
+
+    async perform(element: Element): Promise<void> {
         const webelement = await element.getWebElement();
-        /* tslint:disable:no-string-literal */
-        const driver = element['driver'];
-        /* tslint:enable:no-string-literal */
-        await driver.actions().mouseMove(webelement).perform();
+        await this.driver.actions().mouseMove(webelement).perform();
+    }
+
+    toString() {
+        return 'hover';
     }
 }

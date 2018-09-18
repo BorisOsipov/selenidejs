@@ -13,15 +13,24 @@
 // limitations under the License.
 
 import { Button } from 'selenium-webdriver';
+import { Driver } from '..';
 import { Element } from '../baseEntities/element';
 import { Command } from './command';
 
 export class ContextClick implements Command<Element> {
-    async perform(element: Element, ...args: any[]): Promise<void> {
-        const webelement = await element.getWebElement();
-        /* tslint:disable:no-string-literal */
-        const driver = element['driver'];
-        /* tslint:enable:no-string-literal */
-        await driver.actions().click(webelement, String(Button.RIGHT)).perform();
+    private readonly driver: Driver;
+
+    constructor(driver: Driver) {
+        this.driver = driver;
     }
+
+    async perform(element: Element): Promise<void> {
+        const webelement = await element.getWebElement();
+        await this.driver.actions().click(webelement, String(Button.RIGHT)).perform();
+    }
+
+    toString() {
+        return 'contextClick';
+    }
+
 }

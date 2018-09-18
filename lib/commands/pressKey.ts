@@ -16,9 +16,20 @@ import { Element } from '../baseEntities/element';
 import { Command } from './command';
 
 export class PressKey implements Command<Element> {
-    async perform(element: Element, ...args: any[]): Promise<void> {
-        const webelement = await element.getWebElement();
-        const key = args[0];
-        await webelement.sendKeys(String(key));
+    private readonly key: string;
+
+    constructor(key: string) {
+        this.key = key;
     }
+
+    async perform(element: Element): Promise<void> {
+        const webelement = await element.getWebElement();
+        await webelement.sendKeys(this.key);
+    }
+
+
+    toString() {
+        return `press key ${this.key}`;
+    }
+
 }

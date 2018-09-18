@@ -14,10 +14,15 @@
 // limitations under the License.
 Object.defineProperty(exports, "__esModule", { value: true });
 class PressKey {
-    async perform(element, ...args) {
+    constructor(key) {
+        this.key = key;
+    }
+    async perform(element) {
         const webelement = await element.getWebElement();
-        const key = args[0];
-        await webelement.sendKeys(String(key));
+        await webelement.sendKeys(this.key);
+    }
+    toString() {
+        return `press key ${this.key}`;
     }
 }
 exports.PressKey = PressKey;

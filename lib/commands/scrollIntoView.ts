@@ -12,15 +12,25 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import { Driver } from '..';
 import { Element } from '../baseEntities/element';
 import { Command } from './command';
 
+
 export class ScrollIntoView implements Command<Element> {
-    async perform(element: Element, ...args: any[]): Promise<void> {
-        const webelement = await element.getWebElement();
-        /* tslint:disable:no-string-literal */
-        const driver = element['driver'];
-        /* tslint:enable:no-string-literal */
-        await driver.executeScript('arguments[0].scrollIntoView(true);', webelement);
+    private readonly driver: Driver;
+
+    constructor(driver: Driver) {
+        this.driver = driver;
     }
+
+    async perform(element: Element): Promise<void> {
+        const webelement = await element.getWebElement();
+        await this.driver.executeScript('arguments[0].scrollIntoView(true);', webelement);
+    }
+
+    toString() {
+        return 'scrollIntoView';
+    }
+
 }

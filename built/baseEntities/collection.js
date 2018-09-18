@@ -15,6 +15,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const condition_1 = require("../conditions/condition");
 const element_1 = require("./element");
+const hookExecutor_1 = require("./hooks/hookExecutor");
 const byFilteredWebElementsLocator_1 = require("./locators/byFilteredWebElementsLocator");
 const byIndexedWebElementLocator_1 = require("./locators/byIndexedWebElementLocator");
 const wait_1 = require("./wait");
@@ -22,7 +23,7 @@ class Collection {
     constructor(locator, driver) {
         this.locator = locator;
         this.driver = driver;
-        this.wait = new wait_1.Wait(this, driver);
+        this.wait = new wait_1.Wait(this, this.driver.configuration, new hookExecutor_1.HookExecutor(driver, this));
     }
     async should(condition, timeout) {
         return timeout

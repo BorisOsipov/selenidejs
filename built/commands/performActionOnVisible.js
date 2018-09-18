@@ -16,52 +16,25 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const be_1 = require("../conditions/helpers/be");
 const cannotPerformActionError_1 = require("../errors/cannotPerformActionError");
 class PerformActionOnVisible {
-    async perform(element, ...args) {
-        /* tslint:disable:no-string-literal */
-        const driver = element['driver'];
-        /* tslint:enable:no-string-literal */
-        const configuration = driver.configuration;
-        const actionName = args[0];
-        const action = args[1];
-        const actionArgumentsStartIndex = 2;
-        const actionArguments = args.slice(actionArgumentsStartIndex);
+    constructor(hooksExecutor, command) {
+        this.hooksExecutor = hooksExecutor;
+        this.command = command;
+    }
+    async perform(element) {
         try {
-            await action(element, actionArguments);
+            await this.command.perform(element);
         }
         catch (ignored) {
             await element.should(be_1.be.visible);
             try {
-                await action(element, actionArguments);
+                await this.command.perform(element);
             }
             catch (error) {
                 error.message =
-                    `For element ${element.toString()}: cannot perform ${actionName} reason: ${error.message}`;
-                await this.executeOnFailureHooks(error, configuration.onFailureHooks, driver);
-                await this.executeOnElementFailureHooks(error, element, configuration.onElementFailureHooks, driver);
+                    `For element ${element.toString()}: cannot perform ${this.command.toString()} reason: ${error.message}`;
+                await this.hooksExecutor.executeOnFailureHooks(error);
                 throw new cannotPerformActionError_1.CannotPerformActionError(error.message);
             }
-        }
-    }
-    async executeOnFailureHooks(error, hooks, driver) {
-        for (const onFailureHook of hooks) {
-            await this.tryExecuteHook(onFailureHook.bind(null, error, driver));
-        }
-    }
-    async executeOnElementFailureHooks(error, element, hooks, driver) {
-        for (const onElementFailureHook of hooks) {
-            await this.tryExecuteHook(onElementFailureHook.bind(null, error, driver, element));
-        }
-    }
-    async tryExecuteHook(hook) {
-        try {
-            await hook();
-        }
-        catch (error) {
-            /* tslint:disable:no-console */
-            console.warn(`Cannot perform hook '${hook.toString()}' function cause of:
-                            Error message: ${error.message}
-                            Error stacktrace: ${error.stackTrace}`);
-            /* tslint:enable:no-console */
         }
     }
 }

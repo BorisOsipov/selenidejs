@@ -16,10 +16,18 @@ import { Element } from '../baseEntities/element';
 import { Command } from './command';
 
 export class SendKeys implements Command<Element> {
-    async perform(element: Element, ...args: any[]): Promise<void> {
-        const webelement = await element.getWebElement();
-        const value = args[0];
+    private readonly value: string | number;
 
-        await webelement.sendKeys(String(value));
+    constructor(value: string | number) {
+        this.value = value;
+    }
+
+    async perform(element: Element): Promise<void> {
+        const webelement = await element.getWebElement();
+        await webelement.sendKeys(String(this.value));
+    }
+
+    toString() {
+        return 'sendKeys';
     }
 }

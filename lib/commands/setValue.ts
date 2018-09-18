@@ -16,11 +16,21 @@ import { Element } from '../baseEntities/element';
 import { Command } from './command';
 
 export class SetValue implements Command<Element> {
-    async perform(element: Element, ...args: any[]): Promise<void> {
+
+    private readonly value;
+
+    constructor(value: string | number) {
+        this.value = value;
+    }
+
+    async perform(element: Element): Promise<void> {
         const webelement = await element.getWebElement();
-        const value = args[0];
 
         await webelement.clear();
-        await webelement.sendKeys(String(value));
+        await webelement.sendKeys(String(this.value));
+    }
+
+    toString() {
+        return 'setValue';
     }
 }

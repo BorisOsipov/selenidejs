@@ -37,6 +37,7 @@ const with_1 = require("../locators/with");
 const utils_1 = require("../utils");
 const collection_1 = require("./collection");
 const elementActionHooks_1 = require("./hooks/elementActionHooks");
+const hookExecutor_1 = require("./hooks/hookExecutor");
 const byWebElementLocator_1 = require("./locators/byWebElementLocator");
 const byWebElementsLocator_1 = require("./locators/byWebElementsLocator");
 const wait_1 = require("./wait");
@@ -44,43 +45,43 @@ class Element {
     constructor(locator, driver) {
         this.locator = locator;
         this.driver = driver;
-        this.wait = new wait_1.Wait(this, driver);
+        this.wait = new wait_1.Wait(this, this.driver.configuration, new hookExecutor_1.HookExecutor(driver, this));
     }
     async click() {
-        await new performActionOnVisible_1.PerformActionOnVisible().perform(this, 'click', new click_1.Click().perform);
+        await new performActionOnVisible_1.PerformActionOnVisible(new hookExecutor_1.HookExecutor(this.driver, this), new click_1.Click()).perform(this);
     }
     async clickByJS() {
-        await new performActionOnVisible_1.PerformActionOnVisible().perform(this, 'clickByJs', new clickByJs_1.ClickByJs().perform);
+        await new performActionOnVisible_1.PerformActionOnVisible(new hookExecutor_1.HookExecutor(this.driver, this), new clickByJs_1.ClickByJs(this.driver)).perform(this);
     }
     async setValue(value) {
-        await new performActionOnVisible_1.PerformActionOnVisible().perform(this, 'setValue', new setValue_1.SetValue().perform, value);
+        await new performActionOnVisible_1.PerformActionOnVisible(new hookExecutor_1.HookExecutor(this.driver, this), new setValue_1.SetValue(value)).perform(this);
     }
     async setValueByJS(value) {
-        await new performActionOnVisible_1.PerformActionOnVisible().perform(this, 'setValueByJS', new setValueByJs_1.SetValueByJs().perform, value);
+        await new performActionOnVisible_1.PerformActionOnVisible(new hookExecutor_1.HookExecutor(this.driver, this), new setValueByJs_1.SetValueByJs(this.driver, value)).perform(this);
     }
     async sendKeys(value) {
-        await new performActionOnVisible_1.PerformActionOnVisible().perform(this, 'sendKeys', new sendKeys_1.SendKeys().perform, value);
+        await new performActionOnVisible_1.PerformActionOnVisible(new hookExecutor_1.HookExecutor(this.driver, this), new sendKeys_1.SendKeys(value)).perform(this);
     }
     async doubleClick() {
-        await new performActionOnVisible_1.PerformActionOnVisible().perform(this, 'doubleClick', new doubleClick_1.DoubleClick().perform);
+        await new performActionOnVisible_1.PerformActionOnVisible(new hookExecutor_1.HookExecutor(this.driver, this), new doubleClick_1.DoubleClick(this.driver)).perform(this);
     }
     async hover() {
-        await new performActionOnVisible_1.PerformActionOnVisible().perform(this, 'hover', new hover_1.Hover().perform);
+        await new performActionOnVisible_1.PerformActionOnVisible(new hookExecutor_1.HookExecutor(this.driver, this), new hover_1.Hover(this.driver)).perform(this);
     }
     async contextClick() {
-        await new performActionOnVisible_1.PerformActionOnVisible().perform(this, 'contextClick', new contextClick_1.ContextClick().perform);
+        await new performActionOnVisible_1.PerformActionOnVisible(new hookExecutor_1.HookExecutor(this.driver, this), new contextClick_1.ContextClick(this.driver)).perform(this);
     }
     async pressEnter() {
-        await new performActionOnVisible_1.PerformActionOnVisible().perform(this, 'pressEnter', new pressKey_1.PressKey().perform, selenium_webdriver_1.Key.ENTER);
+        await new performActionOnVisible_1.PerformActionOnVisible(new hookExecutor_1.HookExecutor(this.driver, this), new pressKey_1.PressKey(selenium_webdriver_1.Key.ENTER)).perform(this);
     }
     async pressEscape() {
-        await new performActionOnVisible_1.PerformActionOnVisible().perform(this, 'pressEscape', new pressKey_1.PressKey().perform, selenium_webdriver_1.Key.ESCAPE);
+        await new performActionOnVisible_1.PerformActionOnVisible(new hookExecutor_1.HookExecutor(this.driver, this), new pressKey_1.PressKey(selenium_webdriver_1.Key.ESCAPE)).perform(this);
     }
     async pressTab() {
-        await new performActionOnVisible_1.PerformActionOnVisible().perform(this, 'pressTab', new pressKey_1.PressKey().perform, selenium_webdriver_1.Key.TAB);
+        await new performActionOnVisible_1.PerformActionOnVisible(new hookExecutor_1.HookExecutor(this.driver, this), new pressKey_1.PressKey(selenium_webdriver_1.Key.TAB)).perform(this);
     }
     async scrollIntoView() {
-        await new performActionOnVisible_1.PerformActionOnVisible().perform(this, 'scrollIntoView', new scrollIntoView_1.ScrollIntoView().perform);
+        await new performActionOnVisible_1.PerformActionOnVisible(new hookExecutor_1.HookExecutor(this.driver, this), new scrollIntoView_1.ScrollIntoView(this.driver)).perform(this);
     }
     async should(condition, timeout) {
         return this.wait.shouldMatch(condition, timeout);

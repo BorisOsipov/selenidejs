@@ -12,16 +12,22 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import { Driver } from '..';
 import { Element } from '../baseEntities/element';
 import { Command } from './command';
 
 export class SetValueByJs implements Command<Element> {
-    async perform(element: Element, ...args: any[]): Promise<void> {
+
+    private readonly value;
+    private readonly driver: Driver;
+
+    constructor(driver: Driver, value: string | number) {
+        this.value = value;
+        this.driver = driver;
+    }
+
+    async perform(element: Element): Promise<void> {
         const webelement = await element.getWebElement();
-        /* tslint:disable:no-string-literal */
-        const driver = element['driver'];
-        /* tslint:enable:no-string-literal */
-        const value = args[0];
         const script = `return (function(webelement, text) {
                     var maxlength = webelement.getAttribute('maxlength') == null
                         ? -1
@@ -33,6 +39,11 @@ export class SetValueByJs implements Command<Element> {
                     })(arguments[0], arguments[1]);`;
 
         await webelement.clear();
-        await driver.executeScript(script, webelement, String(value));
+        await this.driver.executeScript(script, webelement, String(this.value));
     }
+
+    toString() {
+        return 'setValueByJs';
+    }
+
 }

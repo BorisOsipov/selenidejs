@@ -21,6 +21,7 @@ import { Utils } from '../utils';
 import { Collection } from './collection';
 import { Configuration } from './configuration';
 import { Element } from './element';
+import { HookExecutor } from './hooks/hookExecutor';
 import { ByWebElementLocator } from './locators/byWebElementLocator';
 import { ByWebElementsLocator } from './locators/byWebElementsLocator';
 import { SearchContext } from './SearchContext';
@@ -34,7 +35,7 @@ export class Driver implements SearchContext {
 
     constructor(customConfiguration: Configuration) {
         this.configuration = new Configuration(customConfiguration);
-        this.wait = new Wait(this, this);
+        this.wait = new Wait(this, this.configuration, new HookExecutor<Driver>(this, this));
     }
 
     async get(url: string) {

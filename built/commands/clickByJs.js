@@ -14,6 +14,16 @@
 // limitations under the License.
 Object.defineProperty(exports, "__esModule", { value: true });
 class ClickByJs {
+    constructor(driver) {
+        this.driver = driver;
+    }
+    async perform(element) {
+        const webelement = await element.getWebElement();
+        await this.driver.executeScript(ClickByJs.getClickOnElementWithOffsetScript(0, 0), webelement);
+    }
+    toString() {
+        return 'clickByJs';
+    }
     static getClickOnElementWithOffsetScript(offsetX, offsetY) {
         return `arguments[0].dispatchEvent(new MouseEvent('click', {
             'view': window,
@@ -22,13 +32,6 @@ class ClickByJs {
             'clientX': arguments[0].getClientRects()[0].left + ${offsetX},
             'clientY': arguments[0].getClientRects()[0].top + ${offsetY}
         }))`;
-    }
-    async perform(element, ...args) {
-        const webelement = await element.getWebElement();
-        /* tslint:disable:no-string-literal */
-        const driver = element['driver'];
-        /* tslint:enable:no-string-literal */
-        await driver.executeScript(ClickByJs.getClickOnElementWithOffsetScript(0, 0), webelement);
     }
 }
 exports.ClickByJs = ClickByJs;

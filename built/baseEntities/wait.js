@@ -13,16 +13,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 Object.defineProperty(exports, "__esModule", { value: true });
-const collection_1 = require("./collection");
-const element_1 = require("./element");
 class Wait {
-    constructor(entity, driver) {
-        this.driver = driver;
-        this.configuration = driver.configuration;
+    constructor(entity, configuration, hookExecutor) {
         this.entity = entity;
+        this.configuration = configuration;
+        this.hookExecutor = hookExecutor;
     }
     async shouldMatch(condition, timeout = this.configuration.timeout) {
-        return this.until(condition, timeout);
+        return this.until(condition, timeout)
+            .then(entity => entity, async (error) => {
+            await this.hookExecutor.executeOnFailureHooks(error);
+            throw error;
+        });
     }
     async isMatch(condition, timeout = this.configuration.timeout) {
         return this.until(condition, timeout).then(res => true, err => false);
@@ -39,47 +41,7 @@ class Wait {
             }
         } while (new Date().getTime() < finishTime);
         lastError.message = `${this.entity.toString()} should ${lastError.message}. Wait timed out after ${timeout}ms`;
-        await this.executeOnFailureHooks(lastError);
-        if (this.entity instanceof element_1.Element) {
-            await this.executeOnElementFailureHooks(lastError, this.entity);
-        }
-        else if (this.entity instanceof collection_1.Collection) {
-            await this.executeOnCollectionFailureHooks(lastError, this.entity);
-        }
         throw lastError;
-    }
-    async executeOnFailureHooks(error) {
-        const hooks = this.configuration.onFailureHooks;
-        const driver = this.driver;
-        for (const onFailureHook of hooks) {
-            await this.tryExecuteHook(onFailureHook, error, driver);
-        }
-    }
-    async executeOnElementFailureHooks(error, element) {
-        const hooks = this.configuration.onElementFailureHooks;
-        const driver = this.driver;
-        for (const onElementFailureHook of hooks) {
-            await this.tryExecuteHook(onElementFailureHook, error, driver, element);
-        }
-    }
-    async executeOnCollectionFailureHooks(error, collection) {
-        const hooks = this.configuration.onCollectionFailureHooks;
-        const driver = this.driver;
-        for (const onCollectionFailureHook of hooks) {
-            await this.tryExecuteHook(onCollectionFailureHook, error, driver, collection);
-        }
-    }
-    async tryExecuteHook(hook, ...args) {
-        try {
-            await hook(...args);
-        }
-        catch (error) {
-            /* tslint:disable:no-console */
-            console.warn(`Cannot perform hook '${hook.toString()}' function cause of:
-                            Error message: ${error.message}
-                            Error stacktrace: ${error.stackTrace}`);
-            /* tslint:enable:no-console */
-        }
     }
 }
 exports.Wait = Wait;

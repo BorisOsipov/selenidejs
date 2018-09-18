@@ -32,6 +32,7 @@ import { Utils } from '../utils';
 import { Collection } from './collection';
 import { Driver } from './driver';
 import { ElementActionHooks } from './hooks/elementActionHooks';
+import { HookExecutor } from './hooks/hookExecutor';
 import { ByWebElementLocator } from './locators/byWebElementLocator';
 import { ByWebElementsLocator } from './locators/byWebElementsLocator';
 import { Locator } from './locators/locator';
@@ -48,67 +49,67 @@ export class Element implements SearchContext {
     constructor(locator: Locator<Promise<WebElement>>, driver: Driver) {
         this.locator = locator;
         this.driver = driver;
-        this.wait = new Wait(this, driver);
+        this.wait = new Wait<Element>(this, this.driver.configuration, new HookExecutor<Element>(driver, this));
     }
 
     @ElementActionHooks
     async click() {
-        await new PerformActionOnVisible().perform(this, 'click', new Click().perform);
+        await new PerformActionOnVisible(new HookExecutor<Element>(this.driver, this), new Click()).perform(this);
     }
 
     @ElementActionHooks
     async clickByJS() {
-        await new PerformActionOnVisible().perform(this, 'clickByJs', new ClickByJs().perform);
+        await new PerformActionOnVisible(new HookExecutor<Element>(this.driver, this), new ClickByJs(this.driver)).perform(this);
     }
 
     @ElementActionHooks
     async setValue(value: string | number) {
-        await new PerformActionOnVisible().perform(this, 'setValue', new SetValue().perform, value);
+        await new PerformActionOnVisible(new HookExecutor<Element>(this.driver, this), new SetValue(value)).perform(this);
     }
 
     @ElementActionHooks
     async setValueByJS(value: string | number) {
-        await new PerformActionOnVisible().perform(this, 'setValueByJS', new SetValueByJs().perform, value);
+        await new PerformActionOnVisible(new HookExecutor<Element>(this.driver, this), new SetValueByJs(this.driver, value)).perform(this);
     }
 
     @ElementActionHooks
     async sendKeys(value: string | number) {
-        await new PerformActionOnVisible().perform(this, 'sendKeys', new SendKeys().perform, value);
+        await new PerformActionOnVisible(new HookExecutor<Element>(this.driver, this), new SendKeys(value)).perform(this);
     }
 
     @ElementActionHooks
     async doubleClick() {
-        await new PerformActionOnVisible().perform(this, 'doubleClick', new DoubleClick().perform);
+        await new PerformActionOnVisible(new HookExecutor<Element>(this.driver, this), new DoubleClick(this.driver)).perform(this);
     }
 
     @ElementActionHooks
     async hover() {
-        await new PerformActionOnVisible().perform(this, 'hover', new Hover().perform);
+        await new PerformActionOnVisible(new HookExecutor<Element>(this.driver, this), new Hover(this.driver)).perform(this);
     }
 
     @ElementActionHooks
     async contextClick() {
-        await new PerformActionOnVisible().perform(this, 'contextClick', new ContextClick().perform);
+        await new PerformActionOnVisible(new HookExecutor<Element>(this.driver, this), new ContextClick(this.driver)).perform(this);
     }
 
     @ElementActionHooks
     async pressEnter() {
-        await new PerformActionOnVisible().perform(this, 'pressEnter', new PressKey().perform, Key.ENTER);
+        await new PerformActionOnVisible(new HookExecutor<Element>(this.driver, this), new PressKey(Key.ENTER)).perform(this);
     }
 
     @ElementActionHooks
     async pressEscape() {
-        await new PerformActionOnVisible().perform(this, 'pressEscape', new PressKey().perform, Key.ESCAPE);
+        await new PerformActionOnVisible(new HookExecutor<Element>(this.driver, this), new PressKey(Key.ESCAPE)).perform(this);
     }
 
     @ElementActionHooks
     async pressTab() {
-        await new PerformActionOnVisible().perform(this, 'pressTab', new PressKey().perform, Key.TAB);
+        await new PerformActionOnVisible(new HookExecutor<Element>(this.driver, this), new PressKey(Key.TAB)).perform(this);
     }
 
     @ElementActionHooks
     async scrollIntoView() {
-        await new PerformActionOnVisible().perform(this, 'scrollIntoView', new ScrollIntoView().perform);
+        await new PerformActionOnVisible(new HookExecutor<Element>(this.driver, this), new ScrollIntoView(this.driver)).perform(this);
     }
 
     async should(condition: ElementCondition, timeout?: number): Promise<Element> {

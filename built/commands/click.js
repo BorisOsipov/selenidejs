@@ -18,6 +18,9 @@ class Click {
         const webelement = await element.getWebElement();
         await webelement.click();
     }
+    toString() {
+        return 'click';
+    }
 }
 exports.Click = Click;
 //# sourceMappingURL=click.js.map

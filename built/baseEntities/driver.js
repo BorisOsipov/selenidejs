@@ -20,13 +20,14 @@ const utils_1 = require("../utils");
 const collection_1 = require("./collection");
 const configuration_1 = require("./configuration");
 const element_1 = require("./element");
+const hookExecutor_1 = require("./hooks/hookExecutor");
 const byWebElementLocator_1 = require("./locators/byWebElementLocator");
 const byWebElementsLocator_1 = require("./locators/byWebElementsLocator");
 const wait_1 = require("./wait");
 class Driver {
     constructor(customConfiguration) {
         this.configuration = new configuration_1.Configuration(customConfiguration);
-        this.wait = new wait_1.Wait(this, this);
+        this.wait = new wait_1.Wait(this, this.configuration, new hookExecutor_1.HookExecutor(this, this));
     }
     async get(url) {
         if (this.configuration.windowHeight && this.configuration.windowWidth) {

@@ -12,12 +12,27 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import { Driver } from '..';
 import { Element } from '../baseEntities/element';
 import { Command } from './command';
 
 export class ClickByJs implements Command<Element> {
+    private readonly driver: Driver;
 
-    static getClickOnElementWithOffsetScript(offsetX: number, offsetY: number): string {
+    constructor(driver: Driver) {
+        this.driver = driver;
+    }
+
+    async perform(element: Element): Promise<void> {
+        const webelement = await element.getWebElement();
+        await this.driver.executeScript(ClickByJs.getClickOnElementWithOffsetScript(0, 0), webelement);
+    }
+
+    toString() {
+        return 'clickByJs';
+    }
+
+    private static getClickOnElementWithOffsetScript(offsetX: number, offsetY: number): string {
         return `arguments[0].dispatchEvent(new MouseEvent('click', {
             'view': window,
             'bubbles': true,
@@ -25,14 +40,6 @@ export class ClickByJs implements Command<Element> {
             'clientX': arguments[0].getClientRects()[0].left + ${offsetX},
             'clientY': arguments[0].getClientRects()[0].top + ${offsetY}
         }))`;
-    }
-
-    async perform(element: Element, ...args: any[]): Promise<void> {
-        const webelement = await element.getWebElement();
-        /* tslint:disable:no-string-literal */
-        const driver = element['driver'];
-        /* tslint:enable:no-string-literal */
-        await driver.executeScript(ClickByJs.getClickOnElementWithOffsetScript(0, 0), webelement);
     }
 
 }

@@ -14,13 +14,16 @@
 // limitations under the License.
 Object.defineProperty(exports, "__esModule", { value: true });
 class DoubleClick {
-    async perform(element, ...args) {
+    constructor(driver) {
+        this.driver = driver;
+    }
+    async perform(element) {
         const webelement = await element.getWebElement();
-        /* tslint:disable:no-string-literal */
-        const driver = element['driver'];
-        /* tslint:enable:no-string-literal */
-        await driver.actions().mouseMove(webelement).perform();
-        await driver.actions().doubleClick().perform();
+        await this.driver.actions().mouseMove(webelement).perform();
+        await this.driver.actions().doubleClick().perform();
+    }
+    toString() {
+        return 'doubleClick';
     }
 }
 exports.DoubleClick = DoubleClick;

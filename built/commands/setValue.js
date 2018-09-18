@@ -14,11 +14,16 @@
 // limitations under the License.
 Object.defineProperty(exports, "__esModule", { value: true });
 class SetValue {
-    async perform(element, ...args) {
+    constructor(value) {
+        this.value = value;
+    }
+    async perform(element) {
         const webelement = await element.getWebElement();
-        const value = args[0];
         await webelement.clear();
-        await webelement.sendKeys(String(value));
+        await webelement.sendKeys(String(this.value));
+    }
+    toString() {
+        return 'setValue';
     }
 }
 exports.SetValue = SetValue;
