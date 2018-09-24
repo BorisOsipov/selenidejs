@@ -110,22 +110,20 @@ Describe('Find', () => {
     It('by web elements should return correct elements', async () => {
         await Given.openedEmptyPageWithBody(
             `
-                <h1>Test 1</h1>
-                <h1>Test 2</h1>
-                <h1>Test 3</h1>
+                <h1 id="item">Test 1</h1>
+                <h1 id="item">Test 2</h1>
                 <div>
-                    <h2>Test 4</h2>
-                    <h2>Test 5</h2>
-                    <h2>Test 6</h2>
+                    <h2 id="item">Test 3</h2>
+                    <h2 id="item">Test 4</h2>
+                    <h2 id="item">Test 5</h2>
+                    <h2 id="item">Test 6</h2>
                 </div>
             `
         );
 
-        expect(await Browser.all('h1').size()).toBe(3);
-        await Browser.all('h1').texts()
-            .then(texts => expect(texts).toEqual(['Test 1', 'Test 2', 'Test 3']));
-        await Browser.element('div').all('h2').texts()
-            .then(texts => expect(texts).toEqual(['Test 4', 'Test 5', 'Test 6']));
+        expect(await Browser.all('#item').size()).toBe(6);
+        await Browser.all('h1').size().then(size => expect(size).toEqual(2));
+        await Browser.element('div').all('h2').size().then(size => expect(size).toEqual(4));
     });
 
     It('by web elements should have correct toString', async () => {

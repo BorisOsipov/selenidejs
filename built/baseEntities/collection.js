@@ -58,17 +58,7 @@ class Collection {
             .get(0);
     }
     async size() {
-        return (await this.getWebElements()).length;
-    }
-    async count() {
-        return this.size();
-    }
-    async texts() {
-        const result = [];
-        for (let i = 0; i < await this.size(); i++) {
-            result.push(await this.get(i).text());
-        }
-        return result;
+        return this.getWebElements().then(elements => elements.length);
     }
     async getWebElements() {
         return this.locator.find();

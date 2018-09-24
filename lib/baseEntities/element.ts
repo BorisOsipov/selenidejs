@@ -12,18 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { By, Key, WebElement } from 'selenium-webdriver';
-import { Click } from '../commands/click';
-import { ClickByJs } from '../commands/clickByJs';
-import { ContextClick } from '../commands/contextClick';
-import { DoubleClick } from '../commands/doubleClick';
-import { Hover } from '../commands/hover';
-import { PerformActionOnVisible } from '../commands/performActionOnVisible';
-import { PressKey } from '../commands/pressKey';
-import { ScrollIntoView } from '../commands/scrollIntoView';
-import { SendKeys } from '../commands/sendKeys';
-import { SetValue } from '../commands/setValue';
-import { SetValueByJs } from '../commands/setValueByJs';
+import { By, WebElement } from 'selenium-webdriver';
 import { Condition } from '../conditions/condition';
 import { ElementCondition } from '../conditions/elementCondition';
 import { be } from '../conditions/helpers/be';
@@ -31,6 +20,8 @@ import { With } from '../locators/with';
 import { Utils } from '../utils';
 import { Collection } from './collection';
 import { Driver } from './driver';
+import { perform } from './helpers/perform';
+import { take } from './helpers/take';
 import { ElementActionHooks } from './hooks/elementActionHooks';
 import { HookExecutor } from './hooks/hookExecutor';
 import { ByWebElementLocator } from './locators/byWebElementLocator';
@@ -53,63 +44,58 @@ export class Element implements SearchContext {
     }
 
     @ElementActionHooks
-    async click() {
-        await new PerformActionOnVisible(new HookExecutor<Element>(this.driver, this), new Click()).perform(this);
+    async click(): Promise<Element> {
+        return perform.click(this);
     }
 
     @ElementActionHooks
-    async clickByJS() {
-        await new PerformActionOnVisible(new HookExecutor<Element>(this.driver, this), new ClickByJs(this.driver)).perform(this);
+    async setValue(value: string | number): Promise<Element> {
+        return perform.setValue(value)(this);
     }
 
     @ElementActionHooks
-    async setValue(value: string | number) {
-        await new PerformActionOnVisible(new HookExecutor<Element>(this.driver, this), new SetValue(value)).perform(this);
+    async sendKeys(value: string | number): Promise<Element> {
+        return perform.sendKeys(value)(this);
     }
 
     @ElementActionHooks
-    async setValueByJS(value: string | number) {
-        await new PerformActionOnVisible(new HookExecutor<Element>(this.driver, this), new SetValueByJs(this.driver, value)).perform(this);
+    async doubleClick(): Promise<Element> {
+        return perform.doubleClick(this);
     }
 
     @ElementActionHooks
-    async sendKeys(value: string | number) {
-        await new PerformActionOnVisible(new HookExecutor<Element>(this.driver, this), new SendKeys(value)).perform(this);
+    async hover(): Promise<Element> {
+        return perform.hover(this);
     }
 
     @ElementActionHooks
-    async doubleClick() {
-        await new PerformActionOnVisible(new HookExecutor<Element>(this.driver, this), new DoubleClick(this.driver)).perform(this);
+    async contextClick(): Promise<Element> {
+        return perform.contextClick(this);
     }
 
     @ElementActionHooks
-    async hover() {
-        await new PerformActionOnVisible(new HookExecutor<Element>(this.driver, this), new Hover(this.driver)).perform(this);
+    async pressEnter(): Promise<Element> {
+        return perform.pressEnter(this);
     }
 
     @ElementActionHooks
-    async contextClick() {
-        await new PerformActionOnVisible(new HookExecutor<Element>(this.driver, this), new ContextClick(this.driver)).perform(this);
+    async pressEscape(): Promise<Element> {
+        return perform.pressEscape(this);
     }
 
     @ElementActionHooks
-    async pressEnter() {
-        await new PerformActionOnVisible(new HookExecutor<Element>(this.driver, this), new PressKey(Key.ENTER)).perform(this);
+    async pressTab(): Promise<Element> {
+        return perform.pressTab(this);
     }
 
     @ElementActionHooks
-    async pressEscape() {
-        await new PerformActionOnVisible(new HookExecutor<Element>(this.driver, this), new PressKey(Key.ESCAPE)).perform(this);
+    async pressKey(key: string): Promise<Element> {
+        return perform.pressKey(key)(this);
     }
 
     @ElementActionHooks
-    async pressTab() {
-        await new PerformActionOnVisible(new HookExecutor<Element>(this.driver, this), new PressKey(Key.TAB)).perform(this);
-    }
-
-    @ElementActionHooks
-    async scrollIntoView() {
-        await new PerformActionOnVisible(new HookExecutor<Element>(this.driver, this), new ScrollIntoView(this.driver)).perform(this);
+    async scrollTo(): Promise<Element> {
+        return perform.scrollTo(this);
     }
 
     async should(condition: ElementCondition, timeout?: number): Promise<Element> {
@@ -137,32 +123,31 @@ export class Element implements SearchContext {
     }
 
     async isAbsent(): Promise<boolean> {
-        return this.isPresent().then(result => !result);
+        return this.isPresent().then(isPresent => !isPresent);
     }
 
     async text(): Promise<string> {
-        await this.should(be.visible);
-        return (await this.getWebElement()).getText();
+        return take.text(this);
     }
 
     async hasAttribute(attributeName: string): Promise<boolean> {
-        return this.getWebElement().then(result => result.getAttribute(attributeName) !== null, err => false);
+        return take.attribute(attributeName)(this).then(result => true, err => false);
     }
 
     async attribute(attributeName: string): Promise<string> {
-        return this.getWebElement().then(result => result.getAttribute(attributeName), err => '');
+        return take.attribute(attributeName)(this);
     }
 
     async innerHtml(): Promise<string> {
-        return this.attribute('innerHTML');
+        return take.innerHtml(this);
     }
 
     async outerHtml(): Promise<string> {
-        return this.attribute('outerHTML');
+        return take.outerHtml(this);
     }
 
     async value(): Promise<string> {
-        return this.attribute('value');
+        return take.value(this);
     }
 
     async getWebElement(): Promise<WebElement> {

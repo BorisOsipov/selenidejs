@@ -1,9 +1,7 @@
-import { By } from 'selenium-webdriver';
 import { CollectionCondition } from '../collectionCondition';
 import { DriverCondition } from '../driverCondition';
 import { ElementCondition } from '../elementCondition';
 export declare namespace have {
-    function visibleElement(locator: By): ElementCondition;
     function exactText(value: string | number): ElementCondition;
     function text(value: string | number): ElementCondition;
     function attribute(attributeName: string, attributeValue?: string | number): ElementCondition;

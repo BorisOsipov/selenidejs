@@ -20,7 +20,7 @@ import { When } from './when';
 export namespace Given {
 
     export async function openedEmptyPage() {
-        await Browser.get(TestUtils.resourcesUrl() + 'empty.html');
+        await Browser.open(TestUtils.resourcesUrl() + 'empty.html');
     }
 
     export async function openedEmptyPageWithJquery() {

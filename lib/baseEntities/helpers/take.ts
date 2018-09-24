@@ -12,24 +12,29 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { Element } from '../baseEntities/element';
-import { Command } from './command';
 
-export class PressKey implements Command<Element> {
-    private readonly key: string;
-
-    constructor(key: string) {
-        this.key = key;
-    }
-
-    async perform(element: Element): Promise<void> {
-        const webelement = await element.getWebElement();
-        await webelement.sendKeys(this.key);
-    }
+import { Actions } from '../actions';
 
 
-    toString() {
-        return `press key ${this.key}`;
-    }
+export namespace take {
 
+    export const text = Actions.text;
+
+    export const attribute = Actions.attribute;
+
+    export const innerHtml = Actions.attribute('innerHTML');
+
+    export const outerHtml = Actions.attribute('outerHTML');
+
+    export const value = Actions.attribute('value');
+
+    export const screenshot = Actions.screenshot;
+
+    export const url = Actions.url;
+
+    export const title = Actions.title;
+
+    export const pageSource = Actions.pageSource;
+
+    export const tabs = Actions.tabs;
 }

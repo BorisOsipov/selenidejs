@@ -14,6 +14,7 @@
 
 import { Describe, It } from 'jasmine-cookies';
 import { By } from 'selenium-webdriver';
+import { Browser, Driver } from '../../lib';
 import { Utils } from '../../lib/utils';
 
 /* tslint:disable:space-before-function-paren */
@@ -34,6 +35,10 @@ Describe('Utils', () => {
     It('to by should handle By object', async () => {
         expect(Utils.toBy(By.id('test')) instanceof By).toBeTruthy();
         expect(Utils.toBy(By.id('test')).toString()).toBe('By(css selector, *[id="test"])');
+    });
+
+    It('get driver should return Driver instance', async () => {
+        expect(Utils.getDriver(Browser.element('')) instanceof Driver).toBeTruthy();
     });
 
 });

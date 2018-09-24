@@ -19,8 +19,6 @@ export declare class Collection {
     filterBy(condition: ElementCondition): Collection;
     findBy(condition: ElementCondition): Element;
     size(): Promise<number>;
-    count(): Promise<number>;
-    texts(): Promise<string[]>;
     getWebElements(): Promise<WebElement[]>;
     toString(): string;
 }

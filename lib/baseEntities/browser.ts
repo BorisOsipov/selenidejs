@@ -30,8 +30,8 @@ export namespace Browser {
         configuration = selenideDriver.configuration;
     }
 
-    export async function get(url: string) {
-        return selenideDriver.get(url);
+    export async function open(url: string) {
+        return selenideDriver.open(url);
     }
 
     export async function close() {

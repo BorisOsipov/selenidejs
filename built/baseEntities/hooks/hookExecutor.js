@@ -44,18 +44,18 @@ class HookExecutor {
             throw new error_1.Error(`Unsupported object passed to HookExecuror!\n${this.entity.toString()}`);
         }
     }
-    async executeOnElementFailureHooks(error, element) {
-        const hooks = this.configuration.onElementFailureHooks;
-        const driver = this.driver;
-        for (const onElementFailureHook of hooks) {
-            await this.tryExecuteHook(onElementFailureHook, error, driver, element);
-        }
-    }
     async executeOnCollectionFailureHooks(error, collection) {
         const hooks = this.configuration.onCollectionFailureHooks;
         const driver = this.driver;
         for (const onCollectionFailureHook of hooks) {
             await this.tryExecuteHook(onCollectionFailureHook, error, driver, collection);
+        }
+    }
+    async executeOnElementFailureHooks(error, element) {
+        const hooks = this.configuration.onElementFailureHooks;
+        const driver = this.driver;
+        for (const onElementFailureHook of hooks) {
+            await this.tryExecuteHook(onElementFailureHook, error, driver, element);
         }
     }
     async tryExecuteHook(hook, ...args) {

@@ -45,30 +45,34 @@ export class Configuration {
     static readonly DEFAULT: Configuration = {
         afterElementActionHooks: [],
         beforeElementActionHooks: [],
-        fullpageScreenshot: true,
+        clickByJs: false,
+        fullpageScreenshot: false,
         htmlPath: Configuration.DEFAULT_HTML_PATH,
         onCollectionFailureHooks: [],
         onElementFailureHooks: [],
         onFailureHooks: Configuration.DEFAULT_ON_FAILURE_HOOKS,
         screenshotPath: Configuration.DEFAULT_SCREENSHOT_PATH,
+        setValueByJs: false,
         timeout: 4000,
         webdriver: null,
         windowHeight: null,
         windowWidth: null
     };
 
-    htmlPath?: string;
-    screenshotPath?: string;
-    timeout?: number;
-    windowWidth?: number;
-    windowHeight?: number;
-    fullpageScreenshot?: boolean;
-    onFailureHooks?: OnFailureHook[];
-    onElementFailureHooks?: OnElementFailureHook[];
-    onCollectionFailureHooks?: OnCollectionFailureHook[];
-    beforeElementActionHooks?: BeforeElementActionHook[];
     afterElementActionHooks?: AfterElementActionHook[];
+    beforeElementActionHooks?: BeforeElementActionHook[];
+    clickByJs?: boolean;
+    fullpageScreenshot?: boolean;
+    htmlPath?: string;
+    onCollectionFailureHooks?: OnCollectionFailureHook[];
+    onElementFailureHooks?: OnElementFailureHook[];
+    onFailureHooks?: OnFailureHook[];
+    screenshotPath?: string;
+    setValueByJs?: boolean;
+    timeout?: number;
     webdriver?: WebDriver;
+    windowHeight?: number;
+    windowWidth?: number;
 
     constructor(customConfiguration: any) {
         Object.assign(this, Configuration.DEFAULT);

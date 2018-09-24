@@ -15,6 +15,7 @@
 import * as fs from 'fs-extra';
 import { By } from 'selenium-webdriver';
 import { Driver } from './baseEntities/driver';
+import { Element } from './baseEntities/element';
 import { With } from './locators/with';
 
 
@@ -44,6 +45,13 @@ export namespace Utils {
         return (typeof cssOrXpathOrBy === 'string')
             ? cssOrXpathOrBy.includes('/') ? With.xpath(cssOrXpathOrBy) : With.css(cssOrXpathOrBy)
             : cssOrXpathOrBy;
+    }
+
+    export function getDriver(entity: Element): Driver {
+        /* tslint:disable:no-string-literal */
+        const driver = entity['driver'];
+        /* tslint:enable:no-string-literal */
+        return driver;
     }
 
 }

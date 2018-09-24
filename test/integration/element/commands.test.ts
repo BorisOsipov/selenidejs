@@ -13,9 +13,8 @@
 // limitations under the License.
 
 import { Describe, It } from 'jasmine-cookies';
-import { preprocessDirectives } from 'tslint/lib/verify/parse';
+import { be, have } from '../../../lib';
 import { Browser } from '../../../lib/baseEntities/browser';
-import { be, have } from '../../../lib/index';
 import { Given } from '../../utils/given';
 import '../base';
 import focused = be.focused;
@@ -25,6 +24,17 @@ import focused = be.focused;
 
 Describe('Element', () => {
 
+    const OVERLAYED_ELEMENTS_HTML = `
+            <div id="container" style="position: relative;">
+                <div id="back" style="position: absolute;">test</div>
+                <div id="front" style="position: absolute;z-index: 10;">test</div>
+            </div>`;
+
+    beforeEach(() => {
+        Browser.configuration.clickByJs = false;
+        Browser.configuration.setValueByJs = false;
+    });
+
     It('should be able to click', async () => {
         await Given.openedEmptyPageWithBody('<a href="#heading">go to Heading</a><h2 id="heading">Heading</h2>');
 
@@ -32,10 +42,23 @@ Describe('Element', () => {
         expect(await Browser.url()).toContain('heading');
     });
 
-    It('should be able to clickByJs', async () => {
+    It('click should produce valid error if visible but not clickable', async () => {
+        await Given.openedEmptyPageWithBody(OVERLAYED_ELEMENTS_HTML);
+
+        await Browser.element('#back').click()
+            .then(
+                result => fail('Expected: error to be thrown'),
+                error => expect(error.message).toContain(
+                    'For element browser.find(By(css selector, #back)): cannot perform click.'
+                )
+            );
+    });
+
+    It('should be able to click by js', async () => {
         await Given.openedEmptyPageWithBody('<a href="#heading">go to Heading</a><h2 id="heading">Heading</h2>');
 
-        await Browser.element('a').clickByJS();
+        Browser.configuration.clickByJs = true;
+        await Browser.element('a').click();
         expect(await Browser.url()).toContain('heading');
     });
 
@@ -103,38 +126,10 @@ Describe('Element', () => {
         expect(await Browser.element('#hoverable').text()).toBe('Its not hover');
     });
 
-    It('should perform action without waiting for visibility if possible', async () => {
-        await Given.openedEmptyPageWithBody('<input id="test" />');
-
-        await Browser.element('input').click().catch(error => fail(error.message));
-    });
-
-    It('should wait for visibility if possible', async () => {
-        Browser.configuration.timeout = 2000;
-        await Given.openedEmptyPageWithBody('<input id="test" style="display:none" />');
-        await Browser.executeScript(
-            'setTimeout(_ => { document.getElementById("test").style = "display:block"; }, 1000);'
-        );
-
-        await Browser.element('input').click().catch(error => fail(error.message));
-    });
-
-    It('should fail with reason if visible but action fails', async () => {
-        await Given.openedEmptyPageWithBody('<label id="test">Test</label>');
-
-        await Browser.element('#test').setValue('')
-            .then(
-                () => fail('Expected: error to be thrown'),
-                error => expect(error.message).toContain(
-                    'reason: invalid element state: Element must be user-editable in order to clear it.'
-                )
-            );
-    });
-
     It('should be able to scrollIntoView', async () => {
         await Given.openedEmptyPageWithBody('<input id="test" />');
 
-        await Browser.element('#test').scrollIntoView();
+        await Browser.element('#test').scrollTo();
         expect(await Browser.element('#test').isVisible()).toBeTruthy();
     });
 
@@ -152,11 +147,22 @@ Describe('Element', () => {
         expect(await Browser.element('#test').value()).toBe('Test');
     });
 
-    It('should be able to setValueByJs', async () => {
+    It('should be able to setValue by js', async () => {
         await Given.openedEmptyPageWithBody('<input id="test" />');
 
-        await Browser.element('#test').setValueByJS('Test');
+        Browser.configuration.setValueByJs = true;
+        await Browser.element('#test').setValue('Test');
         expect(await Browser.element('#test').value()).toBe('Test');
+    });
+
+    It('should wait for visibility if needed', async () => {
+        Browser.configuration.timeout = 2000;
+        await Given.openedEmptyPageWithBody('<input id="test" style="display:none" />');
+        await Browser.executeScript(
+            'setTimeout(_ => { document.getElementById("test").style = "display:block"; }, 1000);'
+        );
+
+        await Browser.element('input').click().catch(error => fail(error.message));
     });
 
 });

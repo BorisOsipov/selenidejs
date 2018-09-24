@@ -13,4 +13,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 Object.defineProperty(exports, "__esModule", { value: true });
-//# sourceMappingURL=command.js.map
+const actions_1 = require("../actions");
+var take;
+(function (take) {
+    take.text = actions_1.Actions.text;
+    take.attribute = actions_1.Actions.attribute;
+    take.innerHtml = actions_1.Actions.attribute('innerHTML');
+    take.outerHtml = actions_1.Actions.attribute('outerHTML');
+    take.value = actions_1.Actions.attribute('value');
+    take.screenshot = actions_1.Actions.screenshot;
+    take.url = actions_1.Actions.url;
+    take.title = actions_1.Actions.title;
+    take.pageSource = actions_1.Actions.pageSource;
+    take.tabs = actions_1.Actions.tabs;
+})(take = exports.take || (exports.take = {}));
+//# sourceMappingURL=take.js.map

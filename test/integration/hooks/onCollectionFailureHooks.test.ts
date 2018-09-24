@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import { Describe, It } from 'jasmine-cookies';
-import { Browser, Collection, Driver, Element, have } from '../../../lib/index';
+import { Browser, Collection, Driver, have } from '../../../lib/index';
 import { Given } from '../../utils/given';
 import '../base';
 

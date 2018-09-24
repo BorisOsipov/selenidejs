@@ -52,19 +52,19 @@ export class HookExecutor<T> {
         }
     }
 
-    private async executeOnElementFailureHooks(error: Error, element: Element) {
-        const hooks = this.configuration.onElementFailureHooks;
-        const driver = this.driver;
-        for (const onElementFailureHook of hooks) {
-            await this.tryExecuteHook(onElementFailureHook, error, driver, element);
-        }
-    }
-
     private async executeOnCollectionFailureHooks(error: Error, collection: Collection) {
         const hooks = this.configuration.onCollectionFailureHooks;
         const driver = this.driver;
         for (const onCollectionFailureHook of hooks) {
             await this.tryExecuteHook(onCollectionFailureHook, error, driver, collection);
+        }
+    }
+
+    private async executeOnElementFailureHooks(error: Error, element: Element) {
+        const hooks = this.configuration.onElementFailureHooks;
+        const driver = this.driver;
+        for (const onElementFailureHook of hooks) {
+            await this.tryExecuteHook(onElementFailureHook, error, driver, element);
         }
     }
 

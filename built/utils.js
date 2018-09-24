@@ -43,5 +43,12 @@ var Utils;
             : cssOrXpathOrBy;
     }
     Utils.toBy = toBy;
+    function getDriver(entity) {
+        /* tslint:disable:no-string-literal */
+        const driver = entity['driver'];
+        /* tslint:enable:no-string-literal */
+        return driver;
+    }
+    Utils.getDriver = getDriver;
 })(Utils = exports.Utils || (exports.Utils = {}));
 //# sourceMappingURL=utils.js.map

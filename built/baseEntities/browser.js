@@ -21,10 +21,10 @@ var Browser;
         Browser.configuration = Browser.selenideDriver.configuration;
     }
     Browser.setDriver = setDriver;
-    async function get(url) {
-        return Browser.selenideDriver.get(url);
+    async function open(url) {
+        return Browser.selenideDriver.open(url);
     }
-    Browser.get = get;
+    Browser.open = open;
     async function close() {
         return Browser.selenideDriver.close();
     }

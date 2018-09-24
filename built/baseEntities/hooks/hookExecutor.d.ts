@@ -8,7 +8,7 @@ export declare class HookExecutor<T> {
     executeOnFailureHooks(error: Error): Promise<void>;
     private executeCommonOnFailureHooks;
     private executeOnEntityFailureHooks;
-    private executeOnElementFailureHooks;
     private executeOnCollectionFailureHooks;
+    private executeOnElementFailureHooks;
     private tryExecuteHook;
 }

@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { By, WebElement } from 'selenium-webdriver';
+import { WebElement } from 'selenium-webdriver';
 import { Collection } from '../baseEntities/collection';
 import { Driver } from '../baseEntities/driver';
 import { Element } from '../baseEntities/element';
@@ -20,7 +20,6 @@ import { ConditionDoesNotMatchError } from '../errors/conditionDoesNotMatchError
 import { CollectionCondition } from './collectionCondition';
 import { DriverCondition } from './driverCondition';
 import { ElementCondition } from './elementCondition';
-import { be } from './helpers/be';
 
 
 export namespace Conditions {
@@ -29,21 +28,6 @@ export namespace Conditions {
     /* tslint:disable:no-invalid-this */
     /* tslint:disable:space-before-function-paren */
     /* tslint:disable:only-arrow-functions */
-
-    export function visibleElement(locator: By): ElementCondition {
-        return new ElementCondition({
-            matches: async function (element: Element) {
-                try {
-                    await element.element(locator).should(be.visible, 0);
-                } catch (ignored) {
-                }
-                throw new ConditionDoesNotMatchError(this.toString());
-            },
-            toString: function () {
-                return `have visible element located ${locator.toString()}`;
-            }
-        });
-    }
 
     export const elementIsSelected: ElementCondition = elementHasAttribute('selected');
 

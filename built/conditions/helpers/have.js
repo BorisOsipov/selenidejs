@@ -16,10 +16,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const conditions_1 = require("../conditions");
 var have;
 (function (have) {
-    function visibleElement(locator) {
-        return conditions_1.Conditions.visibleElement(locator);
-    }
-    have.visibleElement = visibleElement;
     function exactText(value) {
         return conditions_1.Conditions.elementHasExactText(value);
     }

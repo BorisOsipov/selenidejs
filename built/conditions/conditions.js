@@ -18,29 +18,12 @@ const conditionDoesNotMatchError_1 = require("../errors/conditionDoesNotMatchErr
 const collectionCondition_1 = require("./collectionCondition");
 const driverCondition_1 = require("./driverCondition");
 const elementCondition_1 = require("./elementCondition");
-const be_1 = require("./helpers/be");
 var Conditions;
 (function (Conditions) {
     /* tslint:disable:object-literal-shorthand */
     /* tslint:disable:no-invalid-this */
     /* tslint:disable:space-before-function-paren */
     /* tslint:disable:only-arrow-functions */
-    function visibleElement(locator) {
-        return new elementCondition_1.ElementCondition({
-            matches: async function (element) {
-                try {
-                    await element.element(locator).should(be_1.be.visible, 0);
-                }
-                catch (ignored) {
-                }
-                throw new conditionDoesNotMatchError_1.ConditionDoesNotMatchError(this.toString());
-            },
-            toString: function () {
-                return `have visible element located ${locator.toString()}`;
-            }
-        });
-    }
-    Conditions.visibleElement = visibleElement;
     Conditions.elementIsSelected = elementHasAttribute('selected');
     Conditions.elementIsAbsent = new elementCondition_1.ElementCondition({
         matches: async function (element) {

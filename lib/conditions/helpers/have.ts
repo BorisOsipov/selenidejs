@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { By } from 'selenium-webdriver';
 import { CollectionCondition } from '../collectionCondition';
 import { Conditions } from '../conditions';
 import { DriverCondition } from '../driverCondition';
@@ -20,10 +19,6 @@ import { ElementCondition } from '../elementCondition';
 
 
 export namespace have {
-
-    export function visibleElement(locator: By) {
-        return Conditions.visibleElement(locator);
-    }
 
     export function exactText(value: string | number): ElementCondition {
         return Conditions.elementHasExactText(value);

@@ -20,22 +20,13 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const selenium_webdriver_1 = require("selenium-webdriver");
-const click_1 = require("../commands/click");
-const clickByJs_1 = require("../commands/clickByJs");
-const contextClick_1 = require("../commands/contextClick");
-const doubleClick_1 = require("../commands/doubleClick");
-const hover_1 = require("../commands/hover");
-const performActionOnVisible_1 = require("../commands/performActionOnVisible");
-const pressKey_1 = require("../commands/pressKey");
-const scrollIntoView_1 = require("../commands/scrollIntoView");
-const sendKeys_1 = require("../commands/sendKeys");
-const setValue_1 = require("../commands/setValue");
-const setValueByJs_1 = require("../commands/setValueByJs");
 const condition_1 = require("../conditions/condition");
 const be_1 = require("../conditions/helpers/be");
 const with_1 = require("../locators/with");
 const utils_1 = require("../utils");
 const collection_1 = require("./collection");
+const perform_1 = require("./helpers/perform");
+const take_1 = require("./helpers/take");
 const elementActionHooks_1 = require("./hooks/elementActionHooks");
 const hookExecutor_1 = require("./hooks/hookExecutor");
 const byWebElementLocator_1 = require("./locators/byWebElementLocator");
@@ -48,40 +39,37 @@ class Element {
         this.wait = new wait_1.Wait(this, this.driver.configuration, new hookExecutor_1.HookExecutor(driver, this));
     }
     async click() {
-        await new performActionOnVisible_1.PerformActionOnVisible(new hookExecutor_1.HookExecutor(this.driver, this), new click_1.Click()).perform(this);
-    }
-    async clickByJS() {
-        await new performActionOnVisible_1.PerformActionOnVisible(new hookExecutor_1.HookExecutor(this.driver, this), new clickByJs_1.ClickByJs(this.driver)).perform(this);
+        return perform_1.perform.click(this);
     }
     async setValue(value) {
-        await new performActionOnVisible_1.PerformActionOnVisible(new hookExecutor_1.HookExecutor(this.driver, this), new setValue_1.SetValue(value)).perform(this);
-    }
-    async setValueByJS(value) {
-        await new performActionOnVisible_1.PerformActionOnVisible(new hookExecutor_1.HookExecutor(this.driver, this), new setValueByJs_1.SetValueByJs(this.driver, value)).perform(this);
+        return perform_1.perform.setValue(value)(this);
     }
     async sendKeys(value) {
-        await new performActionOnVisible_1.PerformActionOnVisible(new hookExecutor_1.HookExecutor(this.driver, this), new sendKeys_1.SendKeys(value)).perform(this);
+        return perform_1.perform.sendKeys(value)(this);
     }
     async doubleClick() {
-        await new performActionOnVisible_1.PerformActionOnVisible(new hookExecutor_1.HookExecutor(this.driver, this), new doubleClick_1.DoubleClick(this.driver)).perform(this);
+        return perform_1.perform.doubleClick(this);
     }
     async hover() {
-        await new performActionOnVisible_1.PerformActionOnVisible(new hookExecutor_1.HookExecutor(this.driver, this), new hover_1.Hover(this.driver)).perform(this);
+        return perform_1.perform.hover(this);
     }
     async contextClick() {
-        await new performActionOnVisible_1.PerformActionOnVisible(new hookExecutor_1.HookExecutor(this.driver, this), new contextClick_1.ContextClick(this.driver)).perform(this);
+        return perform_1.perform.contextClick(this);
     }
     async pressEnter() {
-        await new performActionOnVisible_1.PerformActionOnVisible(new hookExecutor_1.HookExecutor(this.driver, this), new pressKey_1.PressKey(selenium_webdriver_1.Key.ENTER)).perform(this);
+        return perform_1.perform.pressEnter(this);
     }
     async pressEscape() {
-        await new performActionOnVisible_1.PerformActionOnVisible(new hookExecutor_1.HookExecutor(this.driver, this), new pressKey_1.PressKey(selenium_webdriver_1.Key.ESCAPE)).perform(this);
+        return perform_1.perform.pressEscape(this);
     }
     async pressTab() {
-        await new performActionOnVisible_1.PerformActionOnVisible(new hookExecutor_1.HookExecutor(this.driver, this), new pressKey_1.PressKey(selenium_webdriver_1.Key.TAB)).perform(this);
+        return perform_1.perform.pressTab(this);
     }
-    async scrollIntoView() {
-        await new performActionOnVisible_1.PerformActionOnVisible(new hookExecutor_1.HookExecutor(this.driver, this), new scrollIntoView_1.ScrollIntoView(this.driver)).perform(this);
+    async pressKey(key) {
+        return perform_1.perform.pressKey(key)(this);
+    }
+    async scrollTo() {
+        return perform_1.perform.scrollTo(this);
     }
     async should(condition, timeout) {
         return this.wait.shouldMatch(condition, timeout);
@@ -102,26 +90,25 @@ class Element {
         return this.getWebElement().then(result => true, err => false);
     }
     async isAbsent() {
-        return this.isPresent().then(result => !result);
+        return this.isPresent().then(isPresent => !isPresent);
     }
     async text() {
-        await this.should(be_1.be.visible);
-        return (await this.getWebElement()).getText();
+        return take_1.take.text(this);
     }
     async hasAttribute(attributeName) {
-        return this.getWebElement().then(result => result.getAttribute(attributeName) !== null, err => false);
+        return take_1.take.attribute(attributeName)(this).then(result => true, err => false);
     }
     async attribute(attributeName) {
-        return this.getWebElement().then(result => result.getAttribute(attributeName), err => '');
+        return take_1.take.attribute(attributeName)(this);
     }
     async innerHtml() {
-        return this.attribute('innerHTML');
+        return take_1.take.innerHtml(this);
     }
     async outerHtml() {
-        return this.attribute('outerHTML');
+        return take_1.take.outerHtml(this);
     }
     async value() {
-        return this.attribute('value');
+        return take_1.take.value(this);
     }
     async getWebElement() {
         return this.locator.find();
@@ -163,13 +150,7 @@ __decorate([
 ], Element.prototype, "click", null);
 __decorate([
     elementActionHooks_1.ElementActionHooks
-], Element.prototype, "clickByJS", null);
-__decorate([
-    elementActionHooks_1.ElementActionHooks
 ], Element.prototype, "setValue", null);
-__decorate([
-    elementActionHooks_1.ElementActionHooks
-], Element.prototype, "setValueByJS", null);
 __decorate([
     elementActionHooks_1.ElementActionHooks
 ], Element.prototype, "sendKeys", null);
@@ -193,6 +174,9 @@ __decorate([
 ], Element.prototype, "pressTab", null);
 __decorate([
     elementActionHooks_1.ElementActionHooks
-], Element.prototype, "scrollIntoView", null);
+], Element.prototype, "pressKey", null);
+__decorate([
+    elementActionHooks_1.ElementActionHooks
+], Element.prototype, "scrollTo", null);
 exports.Element = Element;
 //# sourceMappingURL=element.js.map

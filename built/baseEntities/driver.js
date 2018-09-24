@@ -14,12 +14,13 @@
 // limitations under the License.
 Object.defineProperty(exports, "__esModule", { value: true });
 const condition_1 = require("../conditions/condition");
-const be_1 = require("../conditions/helpers/be");
 const fullpageScreenshot_1 = require("../queries/fullpageScreenshot");
 const utils_1 = require("../utils");
 const collection_1 = require("./collection");
 const configuration_1 = require("./configuration");
 const element_1 = require("./element");
+const perform_1 = require("./helpers/perform");
+const take_1 = require("./helpers/take");
 const hookExecutor_1 = require("./hooks/hookExecutor");
 const byWebElementLocator_1 = require("./locators/byWebElementLocator");
 const byWebElementsLocator_1 = require("./locators/byWebElementsLocator");
@@ -29,11 +30,14 @@ class Driver {
         this.configuration = new configuration_1.Configuration(customConfiguration);
         this.wait = new wait_1.Wait(this, this.configuration, new hookExecutor_1.HookExecutor(this, this));
     }
-    async get(url) {
+    async open(url) {
         if (this.configuration.windowHeight && this.configuration.windowWidth) {
             await this.resizeWindow(this.configuration.windowWidth, this.configuration.windowHeight);
         }
-        await this.configuration.webdriver.get(url);
+        return perform_1.perform.open(url)(this);
+    }
+    async resizeWindow(width, height) {
+        return perform_1.perform.resizeWindow(width, height)(this);
     }
     async close() {
         await this.configuration.webdriver.close();
@@ -42,27 +46,50 @@ class Driver {
         await this.configuration.webdriver.quit();
     }
     async refresh() {
-        await this.configuration.webdriver.navigate().refresh();
+        return perform_1.perform.refresh(this);
     }
     async acceptAlert() {
-        await this.configuration.webdriver.switchTo().alert().accept();
+        return perform_1.perform.acceptAlert(this);
     }
     async url() {
-        return this.configuration.webdriver.getCurrentUrl();
+        return take_1.take.url(this);
     }
     async title() {
-        return this.configuration.webdriver.getTitle();
+        return take_1.take.title(this);
     }
     async pageSource() {
-        return this.configuration.webdriver.getPageSource();
+        return take_1.take.pageSource(this);
+    }
+    /* tslint:disable:ban-types */
+    async executeScript(script, ...args) {
+        return perform_1.perform.executeScript(script, ...args)(this);
+    }
+    /* tslint:enable:ban-types */
+    async getTabs() {
+        return take_1.take.tabs(this);
+    }
+    async nextTab() {
+        return perform_1.perform.nextTab(this);
+    }
+    async previousTab() {
+        return perform_1.perform.previousTab(this);
+    }
+    async switchToTab(tabId) {
+        return perform_1.perform.switchToTab(tabId)(this);
+    }
+    async switchToFrame(frameElement) {
+        return perform_1.perform.switchToFrame(frameElement)(this);
+    }
+    async switchToDefaultFrame() {
+        return perform_1.perform.switchToDefaultFrame(this);
+    }
+    async clearCacheAndCookies() {
+        return perform_1.perform.clearCacheAndCookies(this);
     }
     async screenshot() {
         return this.configuration.fullpageScreenshot
             ? new fullpageScreenshot_1.FullpageScreenshot().perform(this)
             : Buffer.from(await this.configuration.webdriver.takeScreenshot(), 'base64');
-    }
-    async resizeWindow(width, height) {
-        await this.configuration.webdriver.manage().window().setSize(width, height);
     }
     actions() {
         return this.configuration.webdriver.actions();
@@ -92,48 +119,6 @@ class Driver {
     }
     async isNot(condition, timeout) {
         return this.is(condition_1.Condition.not(condition), timeout);
-    }
-    /* tslint:disable:ban-types */
-    async executeScript(script, ...args) {
-        return this.configuration.webdriver.executeScript(script, ...args);
-    }
-    /* tslint:enable:ban-types */
-    async getTabs() {
-        return this.configuration.webdriver.getAllWindowHandles();
-    }
-    async nextTab() {
-        const currentTab = await this.configuration.webdriver.getWindowHandle();
-        const allTabs = await this.configuration.webdriver.getAllWindowHandles();
-        const currentTabIndex = allTabs.indexOf(currentTab);
-        await this.configuration.webdriver
-            .switchTo()
-            .window(currentTabIndex >= allTabs.length ? allTabs[0] : allTabs[currentTabIndex + 1]);
-    }
-    async previousTab() {
-        const currentTab = await this.configuration.webdriver.getWindowHandle();
-        const allTabs = await this.configuration.webdriver.getAllWindowHandles();
-        const currentTabIndex = allTabs.indexOf(currentTab);
-        await this.configuration.webdriver
-            .switchTo()
-            .window(currentTabIndex > 0 ? allTabs[currentTabIndex - 1] : allTabs[allTabs.length - 1]);
-    }
-    async switchToTab(tabId) {
-        await this.configuration.webdriver.switchTo().window(tabId);
-    }
-    async switchToFrame(frameElement) {
-        await frameElement.should(be_1.be.visible);
-        await this.configuration.webdriver.switchTo().frame(await frameElement.getWebElement());
-    }
-    async switchToDefaultFrame() {
-        await this.configuration.webdriver.switchTo().defaultContent();
-    }
-    async clearCacheAndCookies() {
-        await this.configuration.webdriver.executeScript('window.localStorage.clear();').catch(ignored => {
-        });
-        await this.configuration.webdriver.executeScript('window.sessionStorage.clear();').catch(ignored => {
-        });
-        await this.configuration.webdriver.manage().deleteAllCookies().catch(ignored => {
-        });
     }
     async findElements(locator) {
         return this.configuration.webdriver.findElements(locator);
