@@ -21,7 +21,6 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", { value: true });
 const selenium_webdriver_1 = require("selenium-webdriver");
 const condition_1 = require("../conditions/condition");
-const be_1 = require("../conditions/helpers/be");
 const with_1 = require("../locators/with");
 const utils_1 = require("../utils");
 const collection_1 = require("./collection");
@@ -123,9 +122,6 @@ class Element {
         const by = utils_1.Utils.toBy(cssOrXpathOrBy);
         const locator = new byWebElementLocator_1.ByWebElementLocator(by, this);
         return new Element(locator, this.driver);
-    }
-    visibleElement(cssSelector) {
-        return this.all(cssSelector).findBy(be_1.be.visible);
     }
     all(cssOrXpathOrBy) {
         const by = utils_1.Utils.toBy(cssOrXpathOrBy);

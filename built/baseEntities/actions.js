@@ -296,6 +296,20 @@ var Actions;
             : viewportScreenshot(driver);
     }
     Actions.screenshot = screenshot;
+    async function close(driver) {
+        return wrapDriverAction(driver, async function switchToTab(driver) {
+            await driver.configuration.webdriver.close();
+            return driver;
+        });
+    }
+    Actions.close = close;
+    async function quit(driver) {
+        return wrapDriverAction(driver, async function switchToTab(driver) {
+            await driver.configuration.webdriver.quit();
+            return driver;
+        });
+    }
+    Actions.quit = quit;
     async function viewportScreenshot(driver) {
         return wrapDriverAction(driver, async function screenshot(driver) {
             return Buffer.from(await driver.configuration.webdriver.takeScreenshot(), 'base64');
@@ -314,7 +328,7 @@ var Actions;
         });
     }
     async function wrapDriverAction(driver, action) {
-        return action(driver).catch(async (error) => {
+        return action(driver).then(result => result, async (error) => {
             await executeHooksOnDriverFailure(driver, error);
             throw error;
         });

@@ -12,62 +12,67 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { CollectionCondition } from '../collectionCondition';
 import { Conditions } from '../conditions';
-import { DriverCondition } from '../driverCondition';
-import { ElementCondition } from '../elementCondition';
 
 
 export namespace have {
 
-    export function exactText(value: string | number): ElementCondition {
-        return Conditions.elementHasExactText(value);
+    export function exactText(value: string | number) {
+        return Conditions.exactText(value);
     }
 
     export function text(value: string | number) {
-        return Conditions.elementHasText(value);
+        return Conditions.text(value);
     }
 
-    export function attribute(attributeName: string, attributeValue?: string | number): ElementCondition {
+    export function attribute(attributeName: string, attributeValue?: string | number) {
         return attributeValue === undefined
-            ? Conditions.elementHasAttribute(attributeName)
-            : Conditions.elementHasAttributeWithValue(attributeName, attributeValue);
+            ? Conditions.attribute(attributeName)
+            : Conditions.atributeWithValue(attributeName, attributeValue);
     }
 
-    export function exactAttribute(attributeName: string, attributeValue: string | number): ElementCondition {
-        return Conditions.elementHasAttributeWithExactValue(attributeName, attributeValue);
+    export function exactAttribute(attributeName: string, attributeValue: string | number) {
+        return Conditions.attributeWithExactValue(attributeName, attributeValue);
     }
 
     export function value(value: string | number) {
         return attribute('value', value);
     }
 
-    export function cssClass(cssClass: string): ElementCondition {
-        return Conditions.elementHasClass(cssClass);
+    export function cssClass(cssClass: string) {
+        return Conditions.cssClass(cssClass);
     }
 
-    export function size(size: number): CollectionCondition {
-        return Conditions.collectionHasSize(size);
+    export function size(size: number) {
+        return Conditions.size(size);
     }
 
-    export function texts(...texts: string[]): CollectionCondition {
-        return Conditions.collectionHasTexts(texts);
+    export function sizeGreaterThan(size: number) {
+        return Conditions.sizeGreaterThan(size);
     }
 
-    export function exactTexts(...texts: string[]): CollectionCondition {
-        return Conditions.collectionHasExactTexts(texts);
+    export function texts(...texts: string[]) {
+        return Conditions.texts(...texts);
     }
 
-    export function url(urlPart: string): DriverCondition {
-        return Conditions.browserUrlContains(urlPart);
+    export function exactTexts(...texts: string[]) {
+        return Conditions.exactTexts(...texts);
     }
 
-    export function tabsSize(size: number): DriverCondition {
-        return Conditions.browserTabsHaveSize(size);
+    export function url(urlPart: string) {
+        return Conditions.url(urlPart);
     }
 
-    export function tabsSizeGreaterThan(size: number): DriverCondition {
-        return Conditions.browserTabsHaveSizeGreaterThan(size);
+    export function urlPart(urlPart: string) {
+        return Conditions.urlPart(urlPart);
+    }
+
+    export function tabsSize(size: number) {
+        return Conditions.tabsSize(size);
+    }
+
+    export function tabsSizeGreaterThan(size: number) {
+        return Conditions.tabsSizeGreaterThan(size);
     }
 
 }

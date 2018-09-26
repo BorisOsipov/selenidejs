@@ -66,14 +66,10 @@ var Browser;
     }
     Browser.actions = actions;
     function element(cssOrXpathOrBy) {
-        if (!Browser.selenideDriver)
-            setDriver({});
         return Browser.selenideDriver.element(cssOrXpathOrBy);
     }
     Browser.element = element;
     function all(cssOrXpathOrBy) {
-        if (!Browser.selenideDriver)
-            setDriver({});
         return Browser.selenideDriver.all(cssOrXpathOrBy);
     }
     Browser.all = all;

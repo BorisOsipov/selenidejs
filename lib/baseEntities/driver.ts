@@ -14,7 +14,6 @@
 
 import { ActionSequence, By, WebElement } from 'selenium-webdriver';
 import { Condition } from '../conditions/condition';
-import { DriverCondition } from '../conditions/driverCondition';
 import { FullpageScreenshot } from '../queries/fullpageScreenshot';
 import { Utils } from '../utils';
 import { Collection } from './collection';
@@ -51,11 +50,11 @@ export class Driver implements SearchContext {
     }
 
     async close() {
-        await this.configuration.webdriver.close();
+        return perform.close(this);
     }
 
     async quit() {
-        await this.configuration.webdriver.quit();
+        return perform.quit(this);
     }
 
     async refresh() {
@@ -135,23 +134,23 @@ export class Driver implements SearchContext {
         return new Collection(locator, this);
     }
 
-    async should(condition: DriverCondition, timeout?: number): Promise<Driver> {
+    async should(condition: Condition<Driver>, timeout?: number): Promise<Driver> {
         return timeout
             ? this.wait.shouldMatch(condition, timeout)
             : this.wait.shouldMatch(condition);
     }
 
-    async shouldNot(condition: DriverCondition, timeout?: number): Promise<Driver> {
+    async shouldNot(condition: Condition<Driver>, timeout?: number): Promise<Driver> {
         return this.should(Condition.not(condition), timeout);
     }
 
-    async is(condition: DriverCondition, timeout?: number): Promise<boolean> {
+    async is(condition: Condition<Driver>, timeout?: number): Promise<boolean> {
         return timeout
             ? this.wait.isMatch(condition, timeout)
             : this.wait.isMatch(condition);
     }
 
-    async isNot(condition: DriverCondition, timeout?: number): Promise<boolean> {
+    async isNot(condition: Condition<Driver>, timeout?: number): Promise<boolean> {
         return this.is(Condition.not(condition), timeout);
     }
 

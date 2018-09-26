@@ -12,7 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import * as fs from 'fs-extra';
 import { Describe, It } from 'jasmine-cookies';
+import * as path from 'path';
 import { By } from 'selenium-webdriver';
 import { Browser, Driver } from '../../lib';
 import { Utils } from '../../lib/utils';
@@ -39,6 +41,34 @@ Describe('Utils', () => {
 
     It('get driver should return Driver instance', async () => {
         expect(Utils.getDriver(Browser.element('')) instanceof Driver).toBeTruthy();
+    });
+
+    It('save page source should save correct data', async () => {
+        const driverMock: any = {
+            pageSource: () => 'test page source',
+            title: () => 'test title'
+        };
+
+        const testPath = path.resolve('./');
+        const filePath = await Utils.savePageSource(driverMock, testPath);
+
+        expect(filePath).toMatch(new RegExp(`${driverMock.title()}_.*\.html`));
+        expect(fs.readFileSync(filePath).toString()).toBe(driverMock.pageSource());
+        fs.unlinkSync(filePath);
+    });
+
+    It('save screenshot should save correct data', async () => {
+        const driverMock: any = {
+            screenshot: () => 'test screenshot',
+            title: () => 'test title'
+        };
+
+        const testPath = path.resolve('./');
+        const filePath = await Utils.saveScreenshot(driverMock, testPath);
+
+        expect(filePath).toMatch(new RegExp(`${driverMock.title()}_.*\.png`));
+        expect(fs.readFileSync(filePath).toString()).toBe(driverMock.screenshot());
+        fs.unlinkSync(filePath);
     });
 
 });

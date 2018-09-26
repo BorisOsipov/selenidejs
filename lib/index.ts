@@ -20,11 +20,10 @@ export { Element } from './baseEntities/element';
 export { Wait } from './baseEntities/wait';
 
 export { Condition } from './conditions/condition';
-export { CollectionCondition } from './conditions/collectionCondition';
-export { DriverCondition } from './conditions/driverCondition';
-export { ElementCondition } from './conditions/elementCondition';
 export { be } from './conditions/helpers/be';
 export { have } from './conditions/helpers/have';
+export { perform } from './baseEntities/helpers/perform';
+export { take } from './baseEntities/helpers/take';
 
 export { With } from './locators/with';
 

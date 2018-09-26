@@ -12,19 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { Conditions } from '../conditions'; // DO NOT DELETE THIS LINE!
-import { ElementCondition } from '../elementCondition'; // DO NOT DELETE THIS LINE!
+import { Conditions } from '../conditions';
 
 export namespace be {
-    export const selected = Conditions.elementIsSelected;
+    export const selected = Conditions.selected;
 
-    export const absent = Conditions.elementIsAbsent;
+    export const absent = Conditions.absent;
 
-    export const present = Conditions.elementIsPresent;
+    export const present = Conditions.present;
 
-    export const visible = Conditions.elementIsVisible;
+    export const visible = Conditions.visible;
 
-    export const hidden = Conditions.elementIsHidden;
+    export const hidden = Conditions.hidden;
 
-    export const focused = Conditions.elementIsFocused;
+    export const focused = Conditions.focused;
 }

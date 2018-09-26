@@ -31,4 +31,6 @@ export declare namespace Actions {
     function switchToDefaultFrame(driver: Driver): Promise<any>;
     function clearCacheAndCookies(driver: Driver): Promise<any>;
     function screenshot(driver: Driver): Promise<Buffer>;
+    function close(driver: Driver): Promise<any>;
+    function quit(driver: Driver): Promise<any>;
 }

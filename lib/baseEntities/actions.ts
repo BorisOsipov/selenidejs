@@ -315,6 +315,20 @@ export namespace Actions {
             : viewportScreenshot(driver);
     }
 
+    export async function close(driver: Driver) {
+        return wrapDriverAction(driver, async function switchToTab(driver: Driver) {
+            await driver.configuration.webdriver.close();
+            return driver;
+        });
+    }
+
+    export async function quit(driver: Driver) {
+        return wrapDriverAction(driver, async function switchToTab(driver: Driver) {
+            await driver.configuration.webdriver.quit();
+            return driver;
+        });
+    }
+
     async function viewportScreenshot(driver: Driver) {
         return wrapDriverAction(driver, async function screenshot(driver: Driver) {
             return Buffer.from(await driver.configuration.webdriver.takeScreenshot(), 'base64');
@@ -336,10 +350,12 @@ export namespace Actions {
     }
 
     async function wrapDriverAction(driver: Driver, action: DriverAction): Promise<any> {
-        return action(driver).catch(async (error) => {
-            await executeHooksOnDriverFailure(driver, error);
-            throw error;
-        });
+        return action(driver).then(
+            result => result,
+            async (error) => {
+                await executeHooksOnDriverFailure(driver, error);
+                throw error;
+            });
     }
 
     async function performActionOnVisible(element: Element, action: ElementAction): Promise<any> {

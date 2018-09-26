@@ -12,6 +12,8 @@ export declare namespace perform {
     const sendKeys: typeof Actions.sendKeys;
     const setValue: typeof Actions.setValue;
     const open: typeof Actions.open;
+    const close: typeof Actions.close;
+    const quit: typeof Actions.quit;
     const resizeWindow: typeof Actions.resizeWindow;
     const refresh: typeof Actions.refresh;
     const acceptAlert: typeof Actions.acceptAlert;

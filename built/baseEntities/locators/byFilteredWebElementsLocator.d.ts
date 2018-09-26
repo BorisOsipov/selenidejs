@@ -1,11 +1,12 @@
 import { WebElement } from 'selenium-webdriver';
-import { ElementCondition } from '../../conditions/elementCondition';
+import { Condition } from '../..';
 import { Collection } from '../collection';
+import { Element } from '../element';
 import { Locator } from './locator';
 export declare class ByFilteredWebElementsLocator implements Locator<Promise<WebElement[]>> {
     private readonly elementCondition;
     private readonly collection;
-    constructor(condition: ElementCondition, collection: Collection);
+    constructor(condition: Condition<Element>, collection: Collection);
     find(): Promise<WebElement[]>;
     toString(): string;
 }

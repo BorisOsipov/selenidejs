@@ -45,7 +45,7 @@ Describe('Find', () => {
         await Given.openedEmptyPage();
 
         expect(Browser.all('h1').filterBy(have.exactText('Valid')).toString())
-            .toBe('browser.all(By(css selector, h1)).filteredBy(have exact text \'Valid\')');
+            .toBe("browser.all(By(css selector, h1)).filteredBy(have exact text 'Valid')");
     });
 
     It('by indexed web element should return correct element', async () => {

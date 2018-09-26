@@ -1,9 +1,8 @@
-import { ElementCondition } from '../elementCondition';
 export declare namespace be {
-    const selected: ElementCondition;
-    const absent: ElementCondition;
-    const present: ElementCondition;
-    const visible: ElementCondition;
-    const hidden: ElementCondition;
-    const focused: ElementCondition;
+    const selected: import("../condition").Condition<{}>;
+    const absent: import("../condition").Condition<import("../../baseEntities/element").Element>;
+    const present: import("../condition").Condition<import("../../baseEntities/element").Element>;
+    const visible: import("../condition").Condition<import("../../baseEntities/element").Element>;
+    const hidden: import("../condition").Condition<import("../../baseEntities/element").Element>;
+    const focused: import("../condition").Condition<import("../../baseEntities/element").Element>;
 }

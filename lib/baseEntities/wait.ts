@@ -50,14 +50,14 @@ export class Wait<T> {
 
         do {
             try {
-                return await condition.matches(this.entity);
+                await condition.matches(this.entity);
+                return this.entity;
             } catch (error) {
                 lastError = error;
             }
         } while (new Date().getTime() < finishTime);
 
         lastError.message = `${this.entity.toString()} should ${lastError.message}. Wait timed out after ${timeout}ms`;
-
         throw lastError;
     }
 

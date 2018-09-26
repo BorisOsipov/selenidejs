@@ -28,6 +28,8 @@ var perform;
     perform.sendKeys = actions_1.Actions.sendKeys;
     perform.setValue = actions_1.Actions.setValue;
     perform.open = actions_1.Actions.open;
+    perform.close = actions_1.Actions.close;
+    perform.quit = actions_1.Actions.quit;
     perform.resizeWindow = actions_1.Actions.resizeWindow;
     perform.refresh = actions_1.Actions.refresh;
     perform.acceptAlert = actions_1.Actions.acceptAlert;

@@ -15,364 +15,290 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const selenium_webdriver_1 = require("selenium-webdriver");
 const conditionDoesNotMatchError_1 = require("../errors/conditionDoesNotMatchError");
-const collectionCondition_1 = require("./collectionCondition");
-const driverCondition_1 = require("./driverCondition");
-const elementCondition_1 = require("./elementCondition");
+const utils_1 = require("../utils");
+const condition_1 = require("./condition");
 var Conditions;
 (function (Conditions) {
     /* tslint:disable:object-literal-shorthand */
     /* tslint:disable:no-invalid-this */
-    /* tslint:disable:space-before-function-paren */
+    /* tslint:disable:no-invalid-this */
     /* tslint:disable:only-arrow-functions */
-    Conditions.elementIsSelected = elementHasAttribute('selected');
-    Conditions.elementIsAbsent = new elementCondition_1.ElementCondition({
-        matches: async function (element) {
-            try {
-                await element.getWebElement();
-            }
-            catch (error) {
-                return element;
-            }
-            throw new conditionDoesNotMatchError_1.ConditionDoesNotMatchError(this.toString());
-        },
-        toString: function () {
-            return 'be absent';
+    Conditions.present = condition_1.Condition.create('be present', async function (element) {
+        await element.getWebElement().catch(error => {
+            throw new conditionDoesNotMatchError_1.ConditionDoesNotMatchError('be present');
+        });
+    });
+    Conditions.absent = condition_1.Condition.create('be absent', async function (element) {
+        await element.getWebElement().then(result => {
+            throw new conditionDoesNotMatchError_1.ConditionDoesNotMatchError('be absent');
+        }, error => {
+        });
+    });
+    Conditions.focused = condition_1.Condition.create('be focused', async function (element) {
+        const driver = utils_1.Utils.getDriver(element);
+        const script = 'return document.activeElement';
+        const currentElement = await element.getWebElement();
+        const focusedElement = await driver.executeScript(script);
+        if (!focusedElement) {
+            throw new conditionDoesNotMatchError_1.ConditionDoesNotMatchError('be focused');
+        }
+        if (!selenium_webdriver_1.WebElement.equals(focusedElement, currentElement)) {
+            throw new conditionDoesNotMatchError_1.ConditionDoesNotMatchError('be focused');
         }
     });
-    Conditions.elementIsFocused = new elementCondition_1.ElementCondition({
-        matches: async function (element) {
-            /* tslint:disable:no-string-literal */
-            const driver = element['driver'];
-            /* tslint:enable:no-string-literal */
-            const script = 'return document.activeElement';
-            const currentElement = await element.getWebElement();
-            const focusedElement = await driver.executeScript(script);
-            if (focusedElement && selenium_webdriver_1.WebElement.equals(focusedElement, currentElement)) {
-                return element;
+    Conditions.visible = condition_1.Condition.create('be visible', async function (element) {
+        try {
+            const webelement = await element.getWebElement();
+            if (!await webelement.isDisplayed()) {
+                throw new Error();
             }
-            throw new conditionDoesNotMatchError_1.ConditionDoesNotMatchError(this.toString());
-        },
-        toString: function () {
-            return 'be focused';
+        }
+        catch (error) {
+            throw new conditionDoesNotMatchError_1.ConditionDoesNotMatchError('be visible');
         }
     });
-    Conditions.elementIsPresent = new elementCondition_1.ElementCondition({
-        matches: async function (element) {
+    Conditions.hidden = condition_1.Condition.create('be hidden', async function (element) {
+        const webelement = await element.getWebElement();
+        if (await webelement.isDisplayed()) {
+            throw new conditionDoesNotMatchError_1.ConditionDoesNotMatchError('be hidden');
+        }
+    });
+    function text(text) {
+        return condition_1.Condition.create(`have text '${text}'`, async function (element) {
+            let actualText;
             try {
-                await element.getWebElement();
-                return element;
+                const webelement = await element.getWebElement();
+                actualText = await webelement.getText();
             }
             catch (ignored) {
             }
-            throw new conditionDoesNotMatchError_1.ConditionDoesNotMatchError(this.toString());
-        },
-        toString: function () {
-            return 'be present';
-        }
-    });
-    Conditions.elementIsVisible = new elementCondition_1.ElementCondition({
-        matches: async function (element) {
+            if (!actualText.includes((String(text)))) {
+                throw new conditionDoesNotMatchError_1.ConditionDoesNotMatchError(`have text '${text}', but was '${actualText}'`);
+            }
+        });
+    }
+    Conditions.text = text;
+    function exactText(text) {
+        return condition_1.Condition.create(`have exact text '${text}'`, async function (element) {
+            let actualText;
             try {
-                if (await element.isVisible()) {
-                    return element;
-                }
+                const webelement = await element.getWebElement();
+                actualText = await webelement.getText();
             }
             catch (ignored) {
             }
-            throw new conditionDoesNotMatchError_1.ConditionDoesNotMatchError(this.toString());
-        },
-        toString: function () {
-            return 'be visible';
-        }
-    });
-    Conditions.elementIsHidden = new elementCondition_1.ElementCondition({
-        matches: async function (element) {
+            if (actualText !== String(text)) {
+                throw new conditionDoesNotMatchError_1.ConditionDoesNotMatchError(`have exact text '${text}', but was '${actualText}'`);
+            }
+        });
+    }
+    Conditions.exactText = exactText;
+    function attribute(attributeName) {
+        return condition_1.Condition.create(`have attribute '${attributeName}'`, async function (element) {
+            let attribute;
             try {
-                if (!(await element.isVisible())) {
-                    return element;
-                }
+                const webelement = await element.getWebElement();
+                attribute = await webelement.getAttribute(attributeName);
             }
             catch (ignored) {
             }
+            if (attribute === null) {
+                throw new conditionDoesNotMatchError_1.ConditionDoesNotMatchError(`have attribute '${attributeName}'`);
+            }
+        });
+    }
+    Conditions.attribute = attribute;
+    Conditions.selected = condition_1.Condition.create('be selected', async function (element) {
+        let attribute;
+        try {
+            const webelement = await element.getWebElement();
+            attribute = await webelement.getAttribute('selected');
+        }
+        catch (ignored) {
+        }
+        if (attribute === null) {
             throw new conditionDoesNotMatchError_1.ConditionDoesNotMatchError(this.toString());
-        },
-        toString: function () {
-            return 'be hidden';
         }
     });
-    function elementHasText(text) {
-        return new elementCondition_1.ElementCondition({
-            matches: async function (element) {
-                let actualText;
-                try {
-                    actualText = await (await element.getWebElement()).getText();
-                    if (actualText.includes((String(text)))) {
-                        return element;
-                    }
-                }
-                catch (ignored) {
-                }
-                throw new conditionDoesNotMatchError_1.ConditionDoesNotMatchError(`${this.toString()}, but was '${actualText}'`);
-            },
-            toString: function () {
-                return `have text '${text}'`;
+    function atributeWithValue(attributeName, attributeValue) {
+        return condition_1.Condition.create(`have attribute '${attributeName}' with value '${attributeValue}'`, async function (element) {
+            let actualValue;
+            try {
+                actualValue = await element.attribute(attributeName);
             }
-        });
-    }
-    Conditions.elementHasText = elementHasText;
-    function elementHasExactText(text) {
-        return new elementCondition_1.ElementCondition({
-            matches: async function (element) {
-                let actualText;
-                try {
-                    actualText = await (await element.getWebElement()).getText();
-                    if (String(text) === actualText) {
-                        return element;
-                    }
-                }
-                catch (ignored) {
-                }
-                throw new conditionDoesNotMatchError_1.ConditionDoesNotMatchError(`${this.toString()}, but was '${actualText}'`);
-            },
-            toString: function () {
-                return `have exact text '${text}'`;
+            catch (ignored) {
             }
-        });
-    }
-    Conditions.elementHasExactText = elementHasExactText;
-    function elementHasAttribute(attributeName) {
-        return new elementCondition_1.ElementCondition({
-            matches: async function (element) {
-                try {
-                    if (null !== await element.attribute(attributeName)) {
-                        return element;
-                    }
-                }
-                catch (ignored) {
-                }
-                throw new conditionDoesNotMatchError_1.ConditionDoesNotMatchError(`SelenideElement ${element.toString()} should have attribute '${attributeName}'`);
-            },
-            toString: function () {
-                return `have attribute '${attributeName}'`;
-            }
-        });
-    }
-    Conditions.elementHasAttribute = elementHasAttribute;
-    function elementHasAttributeWithValue(attributeName, attributeValue) {
-        return new elementCondition_1.ElementCondition({
-            matches: async function (element) {
-                let actualValue;
-                try {
-                    actualValue = await element.attribute(attributeName);
-                    if (actualValue.includes(attributeValue)) {
-                        return element;
-                    }
-                }
-                catch (ignored) {
-                }
+            if (!actualValue.includes(attributeValue)) {
                 throw new conditionDoesNotMatchError_1.ConditionDoesNotMatchError(`${this.toString()}, but was '${actualValue}'`);
-            },
-            toString: function () {
-                return `have attribute '${attributeName}' with value '${attributeValue}'`;
             }
         });
     }
-    Conditions.elementHasAttributeWithValue = elementHasAttributeWithValue;
-    function elementHasAttributeWithExactValue(attributeName, attributeValue) {
-        return new elementCondition_1.ElementCondition({
-            matches: async function (element) {
-                let actualValue;
-                try {
-                    actualValue = await element.attribute(attributeName);
-                    if (String(attributeValue) === actualValue) {
-                        return element;
-                    }
-                }
-                catch (ignored) {
-                }
+    Conditions.atributeWithValue = atributeWithValue;
+    function attributeWithExactValue(attributeName, attributeValue) {
+        return condition_1.Condition.create(`have attribute '${attributeName}' with exact value '${attributeValue}'`, async function (element) {
+            let actualValue;
+            try {
+                actualValue = await element.attribute(attributeName);
+            }
+            catch (ignored) {
+            }
+            if (String(attributeValue) !== actualValue) {
                 throw new conditionDoesNotMatchError_1.ConditionDoesNotMatchError(`${this.toString()}, but was '${actualValue}'`);
-            },
-            toString: function () {
-                return `have attribute '${attributeName}' with exact value '${attributeValue}'`;
             }
         });
     }
-    Conditions.elementHasAttributeWithExactValue = elementHasAttributeWithExactValue;
-    function elementHasClass(cssClass) {
-        return new elementCondition_1.ElementCondition({
-            matches: async function (element) {
-                let actualCssClass;
-                try {
-                    actualCssClass = await element.attribute('class');
-                    if (actualCssClass.split(' ').includes(String(cssClass))) {
-                        return element;
-                    }
-                }
-                catch (ignored) {
-                }
+    Conditions.attributeWithExactValue = attributeWithExactValue;
+    function cssClass(cssClass) {
+        return condition_1.Condition.create(`have css class '${cssClass}'`, async function (element) {
+            let actualCssClass;
+            try {
+                actualCssClass = await element.attribute('class');
+            }
+            catch (ignored) {
+            }
+            if (!actualCssClass.split(' ').includes(cssClass)) {
                 throw new conditionDoesNotMatchError_1.ConditionDoesNotMatchError(`${this.toString()}, but was '${actualCssClass}'`);
-            },
-            toString: function () {
-                return `have css class '${cssClass}'`;
             }
         });
     }
-    Conditions.elementHasClass = elementHasClass;
-    function collectionHasSize(size) {
-        return new collectionCondition_1.CollectionCondition({
-            matches: async function (collection) {
-                let actualCollectionSize;
-                try {
-                    actualCollectionSize = await collection.size();
-                    if (size === actualCollectionSize) {
-                        return collection;
-                    }
-                }
-                catch (ignored) {
-                }
+    Conditions.cssClass = cssClass;
+    function size(size) {
+        return condition_1.Condition.create(`have size '${size}'`, async function (collection) {
+            let actualCollectionSize;
+            try {
+                actualCollectionSize = await collection.size();
+            }
+            catch (ignored) {
+            }
+            if (size !== actualCollectionSize) {
                 throw new conditionDoesNotMatchError_1.ConditionDoesNotMatchError(`${this.toString()}, but was '${actualCollectionSize}'`);
-            },
-            toString: function () {
-                return `have size '${size}'`;
             }
         });
     }
-    Conditions.collectionHasSize = collectionHasSize;
-    function collectionHasSizeMoreThan(size) {
-        return new collectionCondition_1.CollectionCondition({
-            matches: async function (collection) {
-                let actualCollectionSize;
-                try {
-                    actualCollectionSize = await collection.size();
-                    if (size < actualCollectionSize) {
-                        return collection;
-                    }
-                }
-                catch (ignored) {
-                }
+    Conditions.size = size;
+    function sizeGreaterThan(size) {
+        return condition_1.Condition.create(`have size more than '${size}'`, async function (collection) {
+            let actualCollectionSize;
+            try {
+                actualCollectionSize = await collection.size();
+            }
+            catch (ignored) {
+            }
+            if (size >= actualCollectionSize) {
                 throw new conditionDoesNotMatchError_1.ConditionDoesNotMatchError(`${this.toString()}, but was '${actualCollectionSize}'`);
-            },
-            toString: function () {
-                return `have size more than '${size}'`;
             }
         });
     }
-    Conditions.collectionHasSizeMoreThan = collectionHasSizeMoreThan;
-    function collectionHasTexts(texts) {
-        return new collectionCondition_1.CollectionCondition({
-            matches: async function (collection) {
-                const actualTexts = [];
-                try {
-                    const actualElements = await collection.getWebElements();
-                    for (const webElement of actualElements)
-                        actualTexts.push(await webElement.getText());
-                    if (texts.length !== actualTexts.length) {
+    Conditions.sizeGreaterThan = sizeGreaterThan;
+    function texts(...texts) {
+        return condition_1.Condition.create(`have exact texts '${texts}'`, async function (collection) {
+            const actualTexts = [];
+            let success = false;
+            try {
+                const actualElements = await collection.getWebElements();
+                for (const webElement of actualElements) {
+                    actualTexts.push(await webElement.getText());
+                }
+                if (texts.length !== actualTexts.length) {
+                    throw new Error();
+                }
+                for (let i = 0; i < texts.length; i++) {
+                    if (!actualTexts[i].includes(String(texts[i]))) {
                         throw new Error();
                     }
-                    for (let i = 0; i < texts.length; i++) {
-                        if (!actualTexts[i].includes(String(texts[i]))) {
-                            throw new Error();
-                        }
-                    }
-                    return collection;
                 }
-                catch (ignored) {
-                }
+                success = true;
+            }
+            catch (ignored) {
+            }
+            if (!success) {
                 throw new conditionDoesNotMatchError_1.ConditionDoesNotMatchError(`${this.toString()}, but was '${actualTexts}'`);
-            },
-            toString: function () {
-                return `have texts '${texts}'`;
             }
         });
     }
-    Conditions.collectionHasTexts = collectionHasTexts;
-    function collectionHasExactTexts(texts) {
-        return new collectionCondition_1.CollectionCondition({
-            matches: async function (collection) {
-                const actualTexts = [];
-                try {
-                    const actualElements = await collection.getWebElements();
-                    for (const webElement of actualElements)
-                        actualTexts.push(await webElement.getText());
-                    if (actualTexts.length !== texts.length) {
+    Conditions.texts = texts;
+    function exactTexts(...texts) {
+        return condition_1.Condition.create(`have exact texts '${texts}'`, async function (collection) {
+            const actualTexts = [];
+            let success;
+            try {
+                const actualElements = await collection.getWebElements();
+                for (const webElement of actualElements) {
+                    actualTexts.push(await webElement.getText());
+                }
+                if (texts.length !== actualTexts.length) {
+                    throw new Error();
+                }
+                for (let i = 0; i < texts.length; i++) {
+                    if (actualTexts[i] !== texts[i]) {
                         throw new Error();
                     }
-                    for (let i = 0; i < texts.length; i++) {
-                        if (actualTexts[i] !== String(texts[i])) {
-                            throw new Error();
-                        }
-                    }
-                    return collection;
                 }
-                catch (ignored) {
-                }
+                success = true;
+            }
+            catch (ignored) {
+            }
+            if (!success) {
                 throw new conditionDoesNotMatchError_1.ConditionDoesNotMatchError(`${this.toString()}, but was '${actualTexts}'`);
-            },
-            toString: function () {
-                return `have exact texts '${texts}'`;
             }
         });
     }
-    Conditions.collectionHasExactTexts = collectionHasExactTexts;
-    function browserUrlContains(url) {
-        return new driverCondition_1.DriverCondition({
-            matches: async function (selenideDriver) {
-                let actualUrl;
-                try {
-                    actualUrl = await selenideDriver.url();
-                    if (actualUrl.includes(url)) {
-                        return selenideDriver;
-                    }
-                }
-                catch (ignored) {
-                }
+    Conditions.exactTexts = exactTexts;
+    function urlPart(urlPart) {
+        return condition_1.Condition.create(`have url part '${urlPart}'`, async function (driver) {
+            let actualUrl;
+            try {
+                actualUrl = await driver.configuration.webdriver.getCurrentUrl();
+            }
+            catch (ignored) {
+            }
+            if (!actualUrl.includes(urlPart)) {
                 throw new conditionDoesNotMatchError_1.ConditionDoesNotMatchError(`${this.toString()}, but was '${actualUrl}'`);
-            },
-            toString: function () {
-                return `have url '${url}'`;
             }
         });
     }
-    Conditions.browserUrlContains = browserUrlContains;
-    function browserTabsHaveSize(size) {
-        return new driverCondition_1.DriverCondition({
-            matches: async (selenideDriver) => {
-                let tabs = [];
-                try {
-                    tabs = await selenideDriver.configuration.webdriver.getAllWindowHandles();
-                    if (tabs.length === size) {
-                        return selenideDriver;
-                    }
-                }
-                catch (ignored) {
-                }
+    Conditions.urlPart = urlPart;
+    function url(url) {
+        return condition_1.Condition.create(`have url '${url}'`, async function (driver) {
+            let actualUrl;
+            try {
+                actualUrl = await driver.configuration.webdriver.getCurrentUrl();
+            }
+            catch (ignored) {
+            }
+            if (actualUrl !== url) {
+                throw new conditionDoesNotMatchError_1.ConditionDoesNotMatchError(`${this.toString()}, but was '${actualUrl}'`);
+            }
+        });
+    }
+    Conditions.url = url;
+    function tabsSize(size) {
+        return condition_1.Condition.create(`have tabs size '${size}'`, async function (driver) {
+            let tabs = [];
+            try {
+                tabs = await driver.configuration.webdriver.getAllWindowHandles();
+            }
+            catch (ignored) {
+            }
+            if (tabs.length !== size) {
                 throw new conditionDoesNotMatchError_1.ConditionDoesNotMatchError(`${this.toString()}, but was ${tabs.length}`);
-            },
-            toString: function () {
-                return `have tabs size '${size}'`;
             }
         });
     }
-    Conditions.browserTabsHaveSize = browserTabsHaveSize;
-    function browserTabsHaveSizeGreaterThan(size) {
-        return new driverCondition_1.DriverCondition({
-            matches: async (selenideDriver) => {
-                let tabs = [];
-                try {
-                    tabs = await selenideDriver.configuration.webdriver.getAllWindowHandles();
-                    if (tabs.length > size) {
-                        return selenideDriver;
-                    }
-                }
-                catch (ignored) {
-                }
+    Conditions.tabsSize = tabsSize;
+    function tabsSizeGreaterThan(size) {
+        return condition_1.Condition.create(`have tabs size greater than '${size}'`, async function (driver) {
+            let tabs = [];
+            try {
+                tabs = await driver.configuration.webdriver.getAllWindowHandles();
+            }
+            catch (ignored) {
+            }
+            if (tabs.length <= size) {
                 throw new conditionDoesNotMatchError_1.ConditionDoesNotMatchError(`${this.toString()}, but was ${tabs.length}`);
-            },
-            toString: function () {
-                return `have tabs size greater than '${size}'`;
             }
         });
     }
-    Conditions.browserTabsHaveSizeGreaterThan = browserTabsHaveSizeGreaterThan;
+    Conditions.tabsSizeGreaterThan = tabsSizeGreaterThan;
 })(Conditions = exports.Conditions || (exports.Conditions = {}));
 //# sourceMappingURL=conditions.js.map

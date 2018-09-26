@@ -1,5 +1,5 @@
 import { By, WebElement } from 'selenium-webdriver';
-import { ElementCondition } from '../conditions/elementCondition';
+import { Condition } from '../conditions/condition';
 import { Collection } from './collection';
 import { Driver } from './driver';
 import { Locator } from './locators/locator';
@@ -20,10 +20,10 @@ export declare class Element implements SearchContext {
     pressTab(): Promise<Element>;
     pressKey(key: string): Promise<Element>;
     scrollTo(): Promise<Element>;
-    should(condition: ElementCondition, timeout?: number): Promise<Element>;
-    shouldNot(condition: ElementCondition): Promise<Element>;
-    is(condition: ElementCondition, timeout?: number): Promise<boolean>;
-    isNot(condition: ElementCondition): Promise<boolean>;
+    should(condition: Condition<Element>, timeout?: number): Promise<Element>;
+    shouldNot(condition: Condition<Element>): Promise<Element>;
+    is(condition: Condition<Element>, timeout?: number): Promise<boolean>;
+    isNot(condition: Condition<Element>): Promise<boolean>;
     isVisible(): Promise<boolean>;
     isPresent(): Promise<boolean>;
     isAbsent(): Promise<boolean>;
@@ -37,7 +37,6 @@ export declare class Element implements SearchContext {
     parent(): Element;
     followingSibling(predicate?: string): Element;
     element(cssOrXpathOrBy: string | By): Element;
-    visibleElement(cssSelector: string): Element;
     all(cssOrXpathOrBy: string | By): Collection;
     equals(element: Element): Promise<boolean>;
     findElements(locator: By): Promise<WebElement[]>;

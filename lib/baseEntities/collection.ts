@@ -13,9 +13,7 @@
 // limitations under the License.
 
 import { WebElement } from 'selenium-webdriver';
-import { CollectionCondition } from '../conditions/collectionCondition';
 import { Condition } from '../conditions/condition';
-import { ElementCondition } from '../conditions/elementCondition';
 import { Driver } from './driver';
 import { Element } from './element';
 import { HookExecutor } from './hooks/hookExecutor';
@@ -37,23 +35,23 @@ export class Collection {
         this.wait = new Wait(this, this.driver.configuration, new HookExecutor<Collection>(driver, this));
     }
 
-    async should(condition: CollectionCondition, timeout?: number): Promise<Collection> {
+    async should(condition: Condition<Collection>, timeout?: number): Promise<Collection> {
         return timeout
             ? this.wait.shouldMatch(condition, timeout)
             : this.wait.shouldMatch(condition);
     }
 
-    async shouldNot(condition: CollectionCondition, timeout?: number): Promise<Collection> {
+    async shouldNot(condition: Condition<Collection>, timeout?: number): Promise<Collection> {
         return this.should(Condition.not(condition), timeout);
     }
 
-    async is(condition: CollectionCondition, timeout?: number): Promise<boolean> {
+    async is(condition: Condition<Collection>, timeout?: number): Promise<boolean> {
         return timeout
             ? this.wait.isMatch(condition, timeout)
             : this.wait.isMatch(condition);
     }
 
-    async isNot(condition: CollectionCondition, timeout?: number): Promise<boolean> {
+    async isNot(condition: Condition<Collection>, timeout?: number): Promise<boolean> {
         return this.is(Condition.not(condition), timeout);
     }
 
@@ -65,15 +63,15 @@ export class Collection {
         return this.get(0);
     }
 
-    filter(condition: ElementCondition): Collection {
+    filter(condition: Condition<Element>): Collection {
         return new Collection(new ByFilteredWebElementsLocator(condition, this), this.driver);
     }
 
-    filterBy(condition: ElementCondition): Collection {
+    filterBy(condition: Condition<Element>): Collection {
         return this.filter(condition);
     }
 
-    findBy(condition: ElementCondition): Element {
+    findBy(condition: Condition<Element>): Element {
         return new Collection(new ByFilteredWebElementsLocator(condition, this), this.driver)
             .get(0);
     }

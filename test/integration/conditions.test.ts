@@ -28,7 +28,7 @@ import visible = be.visible;
 Describe('Condition', () => {
 
     beforeAll(async () => {
-        Browser.configuration.timeout = 1;
+        Browser.configuration.timeout = 0.1;
     });
 
     It('AND should check multiple conditions', async () => {
@@ -39,9 +39,15 @@ Describe('Condition', () => {
         expect(
             await Browser.element('#first').is(selected.and(have.attribute('id', 'first')).and(have.text('First')))
         ).toBeTruthy();
+        expect(
+            await Browser.element('#first').is(selected.and(have.attribute('id', 'first')).and(have.text('Invalid')))
+        ).toBeFalsy();
+        expect(
+            await Browser.element('#first').is(selected.and(have.attribute('id', 'invalid')).and(have.text('First')))
+        ).toBeFalsy();
     });
 
-    It('AND should only failed condition on fail', async () => {
+    It('AND should fail with correct message', async () => {
         await Given.openedEmptyPageWithBody(
             '<span selected id="first">First</input>'
         );
@@ -50,8 +56,38 @@ Describe('Condition', () => {
             .then(
                 _ => fail('Expected: assertion should fail'),
                 error => expect(error.message).toBe(
-                    "browser.find(By(css selector, #first)) should have text 'Invalid'. Wait timed out after 1ms"
+                    'browser.find(By(css selector, #first)) should ' +
+                    'be selected AND ' +
+                    "have attribute 'id' with value 'first' AND " +
+                    "have text 'Invalid'. Wait timed out after 0.1ms"
                 )
+            );
+    });
+
+    It('OR should check one of multiple conditions', async () => {
+        await Given.openedEmptyPageWithBody(
+            '<span selected id="first">First</input>'
+        );
+
+        expect(
+            await Browser.element('#first').is(selected.or(have.text('Invalid')))
+        ).toBeTruthy();
+        expect(
+            await Browser.element('#first').is(have.attribute('id', 'invalid').or(have.text('Invalid')))
+        ).toBeFalsy();
+    });
+
+    It('OR should fail with correct message', async () => {
+        await Given.openedEmptyPageWithBody(
+            '<span selected id="first">First</input>'
+        );
+
+        await Browser.element('#first').should(have.attribute('id', 'invalid').or(have.text('Invalid')))
+            .then(
+                _ => fail('Expected: assertion should fail'),
+                error => expect(error.message).toBe(
+                    'browser.find(By(css selector, #first)) should ' +
+                    "have attribute 'id' with value 'invalid' OR have text 'Invalid'. Wait timed out after 0.1ms")
             );
     });
 
@@ -62,6 +98,13 @@ Describe('Condition', () => {
 
         expect(await Browser.element('#first').is(selected)).toBeTruthy();
         expect(await Browser.element('#second').is(selected)).toBeFalsy();
+        await Browser.element('#second').should(be.selected)
+            .then(
+                _ => fail('Expected: assertion should fail'),
+                error => expect(error.message).toBe(
+                    'browser.find(By(css selector, #second)) should be selected. Wait timed out after 0.1ms'
+                )
+            );
     });
 
     It('should be absent', async () => {
@@ -69,6 +112,13 @@ Describe('Condition', () => {
 
         expect(await Browser.element('#first').is(absent)).toBeFalsy();
         expect(await Browser.element('#second').is(absent)).toBeTruthy();
+        await Browser.element('#first').should(be.absent)
+            .then(
+                _ => fail('Expected: assertion should fail'),
+                error => expect(error.message).toBe(
+                    'browser.find(By(css selector, #first)) should be absent. Wait timed out after 0.1ms'
+                )
+            );
     });
 
     It('should be present', async () => {
@@ -76,6 +126,13 @@ Describe('Condition', () => {
 
         expect(await Browser.element('#first').is(present)).toBeTruthy();
         expect(await Browser.element('#second').is(present)).toBeFalsy();
+        await Browser.element('#second').should(be.present)
+            .then(
+                _ => fail('Expected: assertion should fail'),
+                error => expect(error.message).toBe(
+                    'browser.find(By(css selector, #second)) should be present. Wait timed out after 0.1ms'
+                )
+            );
     });
 
     It('should be visible', async () => {
@@ -139,7 +196,7 @@ Describe('Condition', () => {
         await Given.openedEmptyPageWithBody('<h1 id="first" class="some long css">First</h1>');
 
         expect(await Browser.element('#first').is(have.cssClass('some'))).toBeTruthy();
-        expect(await Browser.element('#first').is(have.value('invalid'))).toBeFalsy();
+        expect(await Browser.element('#first').is(have.cssClass('invalid'))).toBeFalsy();
     });
 
     It('should have size', async () => {
@@ -149,11 +206,19 @@ Describe('Condition', () => {
         expect(await Browser.all('#first').is(have.size(0))).toBeFalsy();
     });
 
+    It('should have size greater than', async () => {
+        await Given.openedEmptyPageWithBody('<h1>1</h1><h1>2</h1>');
+
+        expect(await Browser.all('h1').is(have.sizeGreaterThan(1))).toBeTruthy();
+        expect(await Browser.all('h1').is(have.sizeGreaterThan(2))).toBeFalsy();
+    });
+
     It('should have texts', async () => {
         await Given.openedEmptyPageWithBody('<h1 id="list">First</input><h1 id="list">Second</input>');
 
         expect(await Browser.all('#list').is(have.texts('Fir', 'Sec'))).toBeTruthy();
         expect(await Browser.all('#list').is(have.texts('Sec', 'Fir'))).toBeFalsy();
+        expect(await Browser.all('#list').is(have.texts('Sec'))).toBeFalsy();
     });
 
     It('should have exactTexts', async () => {
@@ -161,13 +226,21 @@ Describe('Condition', () => {
 
         expect(await Browser.all('#list').is(have.exactTexts('First', 'Second'))).toBeTruthy();
         expect(await Browser.all('#list').is(have.exactTexts('Second', 'First'))).toBeFalsy();
+        expect(await Browser.all('#list').is(have.exactTexts('Second'))).toBeFalsy();
     });
 
     It('should have url', async () => {
         await Given.openedEmptyPage();
 
-        expect(await Browser.is(have.url('http://localhost'))).toBeTruthy();
+        expect(await Browser.is(have.url('http://localhost:4444/empty.html'))).toBeTruthy();
         expect(await Browser.is(have.url('http://invalid'))).toBeFalsy();
+    });
+
+    It('should have url part', async () => {
+        await Given.openedEmptyPage();
+
+        expect(await Browser.is(have.urlPart('localhost'))).toBeTruthy();
+        expect(await Browser.is(have.urlPart('invalid'))).toBeFalsy();
     });
 
     It('should have tabsSize', async () => {

@@ -1,6 +1,6 @@
 /// <reference types="node" />
 import { ActionSequence, By } from 'selenium-webdriver';
-import { DriverCondition } from '../conditions/driverCondition';
+import { Condition } from '..';
 import { Collection } from './collection';
 import { Configuration } from './configuration';
 import { Driver } from './driver';
@@ -10,8 +10,8 @@ export declare namespace Browser {
     let configuration: Configuration;
     function setDriver(customConfiguration: Configuration): void;
     function open(url: string): Promise<any>;
-    function close(): Promise<void>;
-    function quit(): Promise<void>;
+    function close(): Promise<any>;
+    function quit(): Promise<any>;
     function refresh(): Promise<any>;
     function acceptAlert(): Promise<any>;
     function url(): Promise<string>;
@@ -22,10 +22,10 @@ export declare namespace Browser {
     function actions(): ActionSequence;
     function element(cssOrXpathOrBy: string | By): Element;
     function all(cssOrXpathOrBy: string | By): Collection;
-    function should(condition: DriverCondition, timeout?: number): Promise<Driver>;
-    function shouldNot(condition: DriverCondition, timeout?: number): Promise<Driver>;
-    function is(condition: DriverCondition, timeout?: number): Promise<boolean>;
-    function isNot(condition: DriverCondition, timeout?: number): Promise<boolean>;
+    function should(condition: Condition<Driver>, timeout?: number): Promise<Driver>;
+    function shouldNot(condition: Condition<Driver>, timeout?: number): Promise<Driver>;
+    function is(condition: Condition<Driver>, timeout?: number): Promise<boolean>;
+    function isNot(condition: Condition<Driver>, timeout?: number): Promise<boolean>;
     function executeScript(script: string | Function, ...args: any[]): Promise<any>;
     function getTabs(): Promise<any>;
     function nextTab(): Promise<any>;

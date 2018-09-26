@@ -17,21 +17,21 @@ const conditions_1 = require("../conditions");
 var have;
 (function (have) {
     function exactText(value) {
-        return conditions_1.Conditions.elementHasExactText(value);
+        return conditions_1.Conditions.exactText(value);
     }
     have.exactText = exactText;
     function text(value) {
-        return conditions_1.Conditions.elementHasText(value);
+        return conditions_1.Conditions.text(value);
     }
     have.text = text;
     function attribute(attributeName, attributeValue) {
         return attributeValue === undefined
-            ? conditions_1.Conditions.elementHasAttribute(attributeName)
-            : conditions_1.Conditions.elementHasAttributeWithValue(attributeName, attributeValue);
+            ? conditions_1.Conditions.attribute(attributeName)
+            : conditions_1.Conditions.atributeWithValue(attributeName, attributeValue);
     }
     have.attribute = attribute;
     function exactAttribute(attributeName, attributeValue) {
-        return conditions_1.Conditions.elementHasAttributeWithExactValue(attributeName, attributeValue);
+        return conditions_1.Conditions.attributeWithExactValue(attributeName, attributeValue);
     }
     have.exactAttribute = exactAttribute;
     function value(value) {
@@ -39,31 +39,39 @@ var have;
     }
     have.value = value;
     function cssClass(cssClass) {
-        return conditions_1.Conditions.elementHasClass(cssClass);
+        return conditions_1.Conditions.cssClass(cssClass);
     }
     have.cssClass = cssClass;
     function size(size) {
-        return conditions_1.Conditions.collectionHasSize(size);
+        return conditions_1.Conditions.size(size);
     }
     have.size = size;
+    function sizeGreaterThan(size) {
+        return conditions_1.Conditions.sizeGreaterThan(size);
+    }
+    have.sizeGreaterThan = sizeGreaterThan;
     function texts(...texts) {
-        return conditions_1.Conditions.collectionHasTexts(texts);
+        return conditions_1.Conditions.texts(...texts);
     }
     have.texts = texts;
     function exactTexts(...texts) {
-        return conditions_1.Conditions.collectionHasExactTexts(texts);
+        return conditions_1.Conditions.exactTexts(...texts);
     }
     have.exactTexts = exactTexts;
     function url(urlPart) {
-        return conditions_1.Conditions.browserUrlContains(urlPart);
+        return conditions_1.Conditions.url(urlPart);
     }
     have.url = url;
+    function urlPart(urlPart) {
+        return conditions_1.Conditions.urlPart(urlPart);
+    }
+    have.urlPart = urlPart;
     function tabsSize(size) {
-        return conditions_1.Conditions.browserTabsHaveSize(size);
+        return conditions_1.Conditions.tabsSize(size);
     }
     have.tabsSize = tabsSize;
     function tabsSizeGreaterThan(size) {
-        return conditions_1.Conditions.browserTabsHaveSizeGreaterThan(size);
+        return conditions_1.Conditions.tabsSizeGreaterThan(size);
     }
     have.tabsSizeGreaterThan = tabsSizeGreaterThan;
 })(have = exports.have || (exports.have = {}));

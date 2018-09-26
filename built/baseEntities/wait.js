@@ -34,7 +34,8 @@ class Wait {
         let lastError;
         do {
             try {
-                return await condition.matches(this.entity);
+                await condition.matches(this.entity);
+                return this.entity;
             }
             catch (error) {
                 lastError = error;

@@ -13,17 +13,18 @@
 // limitations under the License.
 
 import { WebElement } from 'selenium-webdriver';
-import { ElementCondition } from '../../conditions/elementCondition';
+import { Condition } from '../..';
 import { Collection } from '../collection';
+import { Element } from '../element';
 import { Locator } from './locator';
 
 
 export class ByFilteredWebElementsLocator implements Locator<Promise<WebElement[]>> {
 
-    private readonly elementCondition: ElementCondition;
+    private readonly elementCondition: Condition<Element>;
     private readonly collection: Collection;
 
-    constructor(condition: ElementCondition, collection: Collection) {
+    constructor(condition: Condition<Element>, collection: Collection) {
         this.elementCondition = condition;
         this.collection = collection;
     }

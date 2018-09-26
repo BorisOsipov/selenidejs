@@ -40,6 +40,10 @@ export namespace perform {
 
     export const open = Actions.open;
 
+    export const close = Actions.close;
+
+    export const quit = Actions.quit;
+
     export const resizeWindow = Actions.resizeWindow;
 
     export const refresh = Actions.refresh;

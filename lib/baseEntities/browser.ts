@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import { ActionSequence, By } from 'selenium-webdriver';
-import { DriverCondition } from '../conditions/driverCondition';
+import { Condition } from '..';
 import { Collection } from './collection';
 import { Configuration } from './configuration';
 import { Driver } from './driver';
@@ -75,28 +75,26 @@ export namespace Browser {
     }
 
     export function element(cssOrXpathOrBy: string | By): Element {
-        if (!selenideDriver) setDriver({} as Configuration);
         return selenideDriver.element(cssOrXpathOrBy);
     }
 
     export function all(cssOrXpathOrBy: string | By): Collection {
-        if (!selenideDriver) setDriver({} as Configuration);
         return selenideDriver.all(cssOrXpathOrBy);
     }
 
-    export async function should(condition: DriverCondition, timeout?: number): Promise<Driver> {
+    export async function should(condition: Condition<Driver>, timeout?: number): Promise<Driver> {
         return selenideDriver.should(condition, timeout);
     }
 
-    export async function shouldNot(condition: DriverCondition, timeout?: number): Promise<Driver> {
+    export async function shouldNot(condition: Condition<Driver>, timeout?: number): Promise<Driver> {
         return selenideDriver.shouldNot(condition, timeout);
     }
 
-    export async function is(condition: DriverCondition, timeout?: number): Promise<boolean> {
+    export async function is(condition: Condition<Driver>, timeout?: number): Promise<boolean> {
         return selenideDriver.is(condition, timeout);
     }
 
-    export async function isNot(condition: DriverCondition, timeout?: number): Promise<boolean> {
+    export async function isNot(condition: Condition<Driver>, timeout?: number): Promise<boolean> {
         return selenideDriver.isNot(condition, timeout);
     }
 

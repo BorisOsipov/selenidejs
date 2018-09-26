@@ -14,8 +14,6 @@
 
 import { By, WebElement } from 'selenium-webdriver';
 import { Condition } from '../conditions/condition';
-import { ElementCondition } from '../conditions/elementCondition';
-import { be } from '../conditions/helpers/be';
 import { With } from '../locators/with';
 import { Utils } from '../utils';
 import { Collection } from './collection';
@@ -98,19 +96,19 @@ export class Element implements SearchContext {
         return perform.scrollTo(this);
     }
 
-    async should(condition: ElementCondition, timeout?: number): Promise<Element> {
+    async should(condition: Condition<Element>, timeout?: number): Promise<Element> {
         return this.wait.shouldMatch(condition, timeout);
     }
 
-    async shouldNot(condition: ElementCondition): Promise<Element> {
+    async shouldNot(condition: Condition<Element>): Promise<Element> {
         return this.should(Condition.not(condition));
     }
 
-    async is(condition: ElementCondition, timeout?: number): Promise<boolean> {
+    async is(condition: Condition<Element>, timeout?: number): Promise<boolean> {
         return this.wait.isMatch(condition, timeout);
     }
 
-    async isNot(condition: ElementCondition): Promise<boolean> {
+    async isNot(condition: Condition<Element>): Promise<boolean> {
         return this.is(Condition.not(condition));
     }
 
@@ -166,10 +164,6 @@ export class Element implements SearchContext {
         const by = Utils.toBy(cssOrXpathOrBy);
         const locator = new ByWebElementLocator(by, this);
         return new Element(locator, this.driver);
-    }
-
-    visibleElement(cssSelector: string): Element {
-        return this.all(cssSelector).findBy(be.visible);
     }
 
     all(cssOrXpathOrBy: string | By): Collection {

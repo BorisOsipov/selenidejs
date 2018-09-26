@@ -40,10 +40,10 @@ class Driver {
         return perform_1.perform.resizeWindow(width, height)(this);
     }
     async close() {
-        await this.configuration.webdriver.close();
+        return perform_1.perform.close(this);
     }
     async quit() {
-        await this.configuration.webdriver.quit();
+        return perform_1.perform.quit(this);
     }
     async refresh() {
         return perform_1.perform.refresh(this);

@@ -13,45 +13,67 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 Object.defineProperty(exports, "__esModule", { value: true });
+/* tslint:disable:max-classes-per-file */
 const conditionDoesNotMatchError_1 = require("../errors/conditionDoesNotMatchError");
 class Condition {
-    constructor(params) {
-        this.matches = params.matches;
-        this.toString = params.toString;
+    constructor(description, func) {
+        this.func = func;
+        this.func.toString = () => description;
+        this.description = description;
+    }
+    static create(description, func) {
+        return new Condition(description, func);
     }
     static not(condition) {
-        return new Condition({
-            toString() {
-                return `not ${condition.toString()}`;
-            },
-            async matches(entity) {
-                try {
-                    await condition.matches(entity);
-                }
-                catch (error) {
-                    return entity;
-                }
-                throw new conditionDoesNotMatchError_1.ConditionDoesNotMatchError(this.toString());
-            }
-        });
+        const toString = `not ${condition.toString()}`;
+        const func = async (entity) => {
+            await condition.matches(entity)
+                .then(() => {
+                throw new conditionDoesNotMatchError_1.ConditionDoesNotMatchError(toString);
+            }, error => true);
+        };
+        return new Condition(toString, func);
+    }
+    matches(entity) {
+        return this.func(entity);
     }
     and(...conditions) {
-        return new Condition({
-            toString() {
-                return conditions.map(condition => condition.toString()).join(' AND ');
-            },
-            async matches(entity) {
-                try {
-                    for (const condition of conditions) {
-                        await condition.matches(entity);
-                    }
-                    return entity;
+        const toStrings = [this.toString(), conditions.map(condition => condition.toString())];
+        const funcs = [this, ...conditions];
+        const toString = toStrings.join(' AND ');
+        const newFunc = async (entity) => {
+            try {
+                for (const func of funcs) {
+                    await func.matches(entity);
                 }
-                catch (ignored) {
-                }
-                throw new conditionDoesNotMatchError_1.ConditionDoesNotMatchError(this.toString());
             }
-        });
+            catch (error) {
+                throw new conditionDoesNotMatchError_1.ConditionDoesNotMatchError(toString);
+            }
+        };
+        return new (class extends Condition {
+        })(toString, newFunc);
+    }
+    or(...conditions) {
+        const toStrings = [this.toString(), conditions.map(condition => condition.toString())];
+        const funcs = [this, ...conditions];
+        const toString = toStrings.join(' OR ');
+        const newFunc = async (entity) => {
+            try {
+                for (const func of funcs) {
+                    await func.matches(entity);
+                    return;
+                }
+            }
+            catch (error) {
+                throw new conditionDoesNotMatchError_1.ConditionDoesNotMatchError(toString);
+            }
+        };
+        return new (class extends Condition {
+        })(toString, newFunc);
+    }
+    toString() {
+        return this.description;
     }
 }
 exports.Condition = Condition;

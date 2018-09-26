@@ -1,6 +1,6 @@
 /// <reference types="node" />
 import { ActionSequence, By, WebElement } from 'selenium-webdriver';
-import { DriverCondition } from '../conditions/driverCondition';
+import { Condition } from '../conditions/condition';
 import { Collection } from './collection';
 import { Configuration } from './configuration';
 import { Element } from './element';
@@ -12,8 +12,8 @@ export declare class Driver implements SearchContext {
     constructor(customConfiguration: Configuration);
     open(url: string): Promise<any>;
     resizeWindow(width: number, height: number): Promise<any>;
-    close(): Promise<void>;
-    quit(): Promise<void>;
+    close(): Promise<any>;
+    quit(): Promise<any>;
     refresh(): Promise<any>;
     acceptAlert(): Promise<any>;
     url(): Promise<string>;
@@ -31,10 +31,10 @@ export declare class Driver implements SearchContext {
     actions(): ActionSequence;
     element(cssOrXpathOrBy: string | By): Element;
     all(cssOrXpathOrBy: string | By): Collection;
-    should(condition: DriverCondition, timeout?: number): Promise<Driver>;
-    shouldNot(condition: DriverCondition, timeout?: number): Promise<Driver>;
-    is(condition: DriverCondition, timeout?: number): Promise<boolean>;
-    isNot(condition: DriverCondition, timeout?: number): Promise<boolean>;
+    should(condition: Condition<Driver>, timeout?: number): Promise<Driver>;
+    shouldNot(condition: Condition<Driver>, timeout?: number): Promise<Driver>;
+    is(condition: Condition<Driver>, timeout?: number): Promise<boolean>;
+    isNot(condition: Condition<Driver>, timeout?: number): Promise<boolean>;
     findElements(locator: By): Promise<WebElement[]>;
     findElement(locator: By): Promise<WebElement>;
     toString(): string;
