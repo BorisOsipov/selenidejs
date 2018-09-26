@@ -14,7 +14,7 @@
 
 import { Describe, It } from 'jasmine-cookies';
 import { be, have } from '../../../lib';
-import { Browser } from '../../../lib/baseEntities/browser';
+import { Browser } from '../../../lib/browser';
 import { Given } from '../../utils/given';
 import '../base';
 import focused = be.focused;

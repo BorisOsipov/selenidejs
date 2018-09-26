@@ -14,9 +14,9 @@
 
 import * as fs from 'fs-extra';
 import { By } from 'selenium-webdriver';
-import { Driver } from './baseEntities/driver';
-import { Element } from './baseEntities/element';
-import { With } from './locators/with';
+import { Driver } from './driver';
+import { Element } from './element';
+import { With } from './with';
 
 
 export namespace Utils {

@@ -14,7 +14,7 @@
 // limitations under the License.
 Object.defineProperty(exports, "__esModule", { value: true });
 const fs = require("fs-extra");
-const with_1 = require("./locators/with");
+const with_1 = require("./with");
 var Utils;
 (function (Utils) {
     async function savePageSource(selenideDriver, filePath) {
